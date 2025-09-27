@@ -1,0 +1,104 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "GUI",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["gui"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Install",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["install"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Install (dry-run)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["install", "--dry-run"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Profiles (list)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["profiles"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Sessions",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["sessions"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Sync Fetch",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["sync", "fetch"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Export",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["export"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Import",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["import"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        },
+        {
+            "name": "Version",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/aws-profile-manager",
+            "cwd": "${workspaceFolder}",
+            "args": ["version"],
+            "envFile": "${workspaceFolder}/.env",
+            "showLog": true
+        }
+    ]
+}
