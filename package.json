@@ -1,0 +1,27 @@
+{
+  "name": "aws-profile-manager",
+  "version": "0.1.0",
+  "description": "AWS Profile Manager",
+  "keywords": [
+    "devops"
+  ],
+  "scripts": {
+    "sync-dev-data": "./scripts/sync-dev-data.sh",
+    "reset-dev": "rm -f ./.dev/aws/config && rm -f ./.dev/config/cache/* && rm -f ./.dev/config/settings-backup.json && rm -rf ./.dev/desktop/aws-profile-cheatsheet.md",
+    "run:go:gui:debug": "AWS_PROFILE_MANAGER_DEBUG=1 go run cmd/aws-profile-manager/main.go gui",
+    "run:go:gui": "go run cmd/aws-profile-manager/main.go gui",
+    "run:local:gui:debug": "AWS_PROFILE_MANAGER_DEBUG=1 ./bin/aws-profile-manager gui",
+    "run:local:gui": "./bin/aws-profile-manager gui",
+    "make:build": "make build",
+    "make:build:all": "make build-all",
+    "make:test": "make test",
+    "make:test-verbose": "make test-verbose",
+    "make:test-coverage": "make test-coverage",
+    "make:fmt": "make fmt",
+    "make:lint": "make lint",
+    "make:vet": "make vet",
+    "make:clean": "make clean",
+    "make:help": "make help",
+    "setup": "make deps-all"
+  }
+}

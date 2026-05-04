@@ -1,0 +1,34 @@
+# ENV files
+.env
+
+# Test artifacts
+coverage/
+coverage.out
+coverage.html
+
+# Build artifacts
+bin/*
+!bin/.gitkeep
+
+/Icon.png
+
+internal/bundled/*
+!internal/bundled/.gitkeep
+
+
+# Dev files
+aws-config.json
+aws-config-*.json
+
+# Development configuration directory
+# Contains personal settings during development - should not be committed
+.dev/aws/*
+!.dev/aws/.gitkeep
+.dev/config/*
+!.dev/config/.gitkeep
+.dev/desktop/*
+!.dev/desktop/.gitkeep
+
+# Backup naming convention
+*.backup
+*-backup.json
