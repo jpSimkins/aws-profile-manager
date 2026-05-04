@@ -112,8 +112,8 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
-      - name: Install SVG converter
-        run: sudo apt-get install -y librsvg2-bin
+      - name: Set up ImageMagick
+        uses: mfinelli/setup-imagemagick@v7
 
       - name: Install dependencies
         run: make deps-all
@@ -149,13 +149,8 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
-      - name: Install SVG converter (Linux)
-        if: ${{ matrix.platform == 'linux' }}
-        run: sudo apt-get install -y librsvg2-bin
-
-      - name: Install SVG converter (macOS)
-        if: ${{ matrix.platform == 'darwin' }}
-        run: brew install librsvg
+      - name: Set up ImageMagick
+        uses: mfinelli/setup-imagemagick@v7
 
       - name: Install dependencies
         run: make deps-all
