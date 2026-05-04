@@ -10,7 +10,7 @@ coverage.html
 bin/*
 !bin/.gitkeep
 
-/Icon.png
+# /Icon.png  # committed — regenerate locally with: make icon
 
 # internal/bundled/*
 # !internal/bundled/.gitkeep

@@ -302,6 +302,35 @@ setup: deps deps-dev ## Setup development environment
 	@echo "Development environment setup complete!"
 
 # -----------------------------------------------------------------------------
+# Package desktop application for distribution (uses fyne package)
+# Produces platform-specific artifacts in bin/:
+#   Linux:   "AWS Profile Manager-linux-<arch>.tar.xz"
+#   macOS:   "AWS Profile Manager-darwin-<arch>.zip"
+#   Windows: "AWS Profile Manager-windows-<arch>.exe"
+# -----------------------------------------------------------------------------
+package-desktop: fyne-tool ## Package desktop application for distribution
+	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
+	@mkdir -p $(BUILD_DIR)
+	"$(GOPATH_BIN)/fyne" package \
+		--icon Icon.png \
+		--name "$(APP_NAME)" \
+		--appID $(APP_ID) \
+		--release \
+		--src $(MAIN_PATH)
+	@if [ "$(HOST_OS)" = "linux" ]; then \
+		mv "$(APP_NAME).tar.xz" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).tar.xz"; \
+		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).tar.xz"; \
+	elif [ "$(HOST_OS)" = "darwin" ]; then \
+		zip -r "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).zip" "$(APP_NAME).app"; \
+		rm -rf "$(APP_NAME).app"; \
+		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).zip"; \
+	elif [ "$(HOST_OS)" = "windows" ]; then \
+		mv "$(APP_NAME) Setup.exe" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe" 2>/dev/null || \
+		mv "$(APP_NAME).exe" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe" 2>/dev/null || true; \
+		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe"; \
+	fi
+
+# -----------------------------------------------------------------------------
 # CI/CD helpers
 # -----------------------------------------------------------------------------
 ci-test: deps vet lint test ## Run all CI tests
