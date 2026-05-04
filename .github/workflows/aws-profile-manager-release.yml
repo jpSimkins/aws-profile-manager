@@ -112,6 +112,9 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
+      - name: Install SVG converter
+        run: sudo apt-get install -y librsvg2-bin
+
       - name: Install dependencies
         run: make deps-all
 
@@ -145,6 +148,14 @@ jobs:
           go-version-file: ./go.mod
           cache: true
           cache-dependency-path: ./go.sum
+
+      - name: Install SVG converter (Linux)
+        if: ${{ matrix.platform == 'linux' }}
+        run: sudo apt-get install -y librsvg2-bin
+
+      - name: Install SVG converter (macOS)
+        if: ${{ matrix.platform == 'darwin' }}
+        run: brew install librsvg
 
       - name: Install dependencies
         run: make deps-all
