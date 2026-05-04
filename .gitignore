@@ -12,8 +12,8 @@ bin/*
 
 /Icon.png
 
-internal/bundled/*
-!internal/bundled/.gitkeep
+# internal/bundled/*
+# !internal/bundled/.gitkeep
 
 
 # Dev files

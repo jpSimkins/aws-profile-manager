@@ -20,7 +20,11 @@ PNG_WIDTH=$((LOGO_WIDTH * 2))
 PNG_HEIGHT=$((LOGO_HEIGHT * 2))
 
 # Check dependencies
-if ! command -v convert >/dev/null 2>&1; then
+if command -v magick >/dev/null 2>&1; then
+  IM=magick
+elif command -v convert >/dev/null 2>&1; then
+  IM=convert
+else
   echo "ERROR: ImageMagick not found - cannot generate PNG logos"
   echo "Install with: sudo apt-get install imagemagick"
   exit 1
@@ -32,7 +36,7 @@ if [ ! -f "$ICON_PNG" ]; then
 fi
 
 # Generate light mode logo from Icon.png (preserves original colors)
-convert "$ICON_PNG" \
+$IM "$ICON_PNG" \
   -resize ${PNG_WIDTH}x${PNG_HEIGHT} \
   -background none \
   -gravity center \
@@ -43,7 +47,7 @@ echo "✓ Generated $LOGO_DIR/logo.png (${PNG_WIDTH}x${PNG_HEIGHT} @ 2x, display
 
 # Generate dark mode logo with brightened colors for visibility on dark backgrounds
 # Brighten blues and oranges for better contrast
-convert "$ICON_PNG" \
+$IM "$ICON_PNG" \
   -resize ${PNG_WIDTH}x${PNG_HEIGHT} \
   -background none \
   -gravity center \
