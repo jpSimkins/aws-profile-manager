@@ -112,9 +112,6 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
-      - name: Set up ImageMagick
-        uses: mfinelli/setup-imagemagick@v7
-
       - name: Install dependencies
         run: make deps-all
 
@@ -148,9 +145,6 @@ jobs:
           go-version-file: ./go.mod
           cache: true
           cache-dependency-path: ./go.sum
-
-      - name: Set up ImageMagick
-        uses: mfinelli/setup-imagemagick@v7
 
       - name: Install dependencies
         run: make deps-all

@@ -114,7 +114,7 @@ build: deps embed-all ## Build for current platform
 # -----------------------------------------------------------------------------
 # Build for current platform with an explicit suffix
 # -----------------------------------------------------------------------------
-build-local: deps embed-all ## Build for current platform (with explicit suffix)
+build-local: deps ## Build for current platform (with explicit suffix)
 	@mkdir -p $(BUILD_DIR)
 	@echo "Building for $(HOST_OS)/$(HOST_ARCH)..."
 	CGO_ENABLED=1 go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $(BUILD_DIR)/$(BINARY_NAME)-$(HOST_OS)-$(HOST_ARCH)$(EXE_EXT) $(MAIN_PATH)
