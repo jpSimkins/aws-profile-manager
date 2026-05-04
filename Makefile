@@ -312,7 +312,7 @@ package-desktop: fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	"$(GOPATH_BIN)/fyne" package \
-		--icon Icon.png \
+		--icon $(CURDIR)/Icon.png \
 		--name "$(APP_NAME)" \
 		--app-id $(APP_ID) \
 		--release \
