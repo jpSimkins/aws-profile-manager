@@ -45,12 +45,8 @@ jobs:
             echo "✅ Expected: v1.0.0"
             exit 1
           fi
-          if [[ ! -d "$TOOL" ]]; then
-            echo "❌ Tool directory not found: $TOOL"
-            exit 1
-          fi
           echo "✅ Version format OK: $VERSION"
-          echo "✅ Tool directory OK: $TOOL"
+          echo "✅ Tool OK: $TOOL"
 
       - name: Check if tag already exists
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -104,9 +100,6 @@ jobs:
   test:
     needs: create-tag
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./aws-profile-manager
     steps:
       - uses: actions/checkout@v4
         with:
@@ -115,9 +108,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./aws-profile-manager/go.mod
+          go-version-file: ./go.mod
           cache: true
-          cache-dependency-path: ./aws-profile-manager/go.sum
+          cache-dependency-path: ./go.sum
 
       - name: Install dependencies
         run: make deps-all
@@ -140,9 +133,6 @@ jobs:
           - os: windows-latest
             platform: windows
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: ./aws-profile-manager
     steps:
       - uses: actions/checkout@v4
         with:
@@ -152,9 +142,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./aws-profile-manager/go.mod
+          go-version-file: ./go.mod
           cache: true
-          cache-dependency-path: ./aws-profile-manager/go.sum
+          cache-dependency-path: ./go.sum
 
       - name: Install dependencies
         run: make deps-all
@@ -215,7 +205,7 @@ jobs:
         with:
           name: build-${{ matrix.platform }}
           if-no-files-found: error
-          path: ${{ github.workspace }}/aws-profile-manager/bin/**
+          path: ${{ github.workspace }}/bin/**
 
   create-release:
     needs: build-and-release
