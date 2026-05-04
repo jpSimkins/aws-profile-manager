@@ -366,7 +366,7 @@ jobs:
 
             ```bash
             # Make executable & run in place
-            chmod u+x aws-profile-manager-linux-<arch>
+            chmod +x aws-profile-manager-linux-<arch>
             ./aws-profile-manager-linux-<arch> --help
 
             # Optional: install to PATH
@@ -379,7 +379,7 @@ jobs:
             ### macOS
 
             ```bash
-            chmod u+x aws-profile-manager-darwin-<arch>
+            chmod +x aws-profile-manager-darwin-<arch>
             ./aws-profile-manager-darwin-<arch> --help
 
             # Optional: install to PATH

@@ -9,7 +9,7 @@ BUILD_DIR := ./bin
 SRC_DIR := ./internal
 CMD_DIR := ./cmd
 APP_NAME := AWS Profile Manager
-APP_ID := com.jpsimkins.aws-profile-manager
+APP_ID := com.son9ne.aws-profile-manager
 
 # Version information (can be overridden)
 VERSION ?= $(shell grep 'AppVersion.*=' internal/core/version.go | sed 's/.*"\(.*\)".*/\1/' 2>/dev/null || echo "0.1.0")
@@ -311,10 +311,9 @@ setup: deps deps-dev ## Setup development environment
 package-desktop: fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
+	@echo "Stamping FyneApp.toml with version $(VERSION)..."
+	@$(SEDI) 's/^Version = .*/Version = "$(VERSION)"/' $(MAIN_PATH)/FyneApp.toml
 	"$(GOPATH_BIN)/fyne" package \
-		--icon $(CURDIR)/Icon.png \
-		--name "$(APP_NAME)" \
-		--app-id $(APP_ID) \
 		--release \
 		--src $(MAIN_PATH)
 	@if [ "$(HOST_OS)" = "linux" ]; then \

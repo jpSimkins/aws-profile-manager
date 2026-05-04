@@ -87,6 +87,14 @@ Features:
 			// Initialize the application before any command runs
 			_ = initializeApp()
 		},
+		// When invoked with no subcommand (e.g. from a desktop launcher), launch the GUI.
+		RunE: func(cmd *cobra.Command, args []string) error {
+			guiCmd, _, err := cmd.Find([]string{"gui"})
+			if err != nil || guiCmd == nil {
+				return cmd.Help()
+			}
+			return guiCmd.RunE(guiCmd, args)
+		},
 	}
 
 	// Add global flags
