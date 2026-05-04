@@ -8,7 +8,7 @@ Version = "0.0.1"
 Build = 1
 
 [Source]
-  Repo = "https://github.com/jpSimkins/aws-profile-manager"
+Repo = "https://github.com/jpSimkins/aws-profile-manager"
 
 
 [LinuxAndBSD]

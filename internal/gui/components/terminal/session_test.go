@@ -57,7 +57,7 @@ func TestLaunchLinux_BadTerminalReturnsError(t *testing.T) {
 	}
 
 	env := map[string]string{"AWS_PROFILE": "prod", "AWS_DEFAULT_REGION": "us-east-1"}
-	err := launchLinux("/nonexistent/terminal-xyz", env, "")
+	err := launchLinux("/nonexistent/terminal-xyz", env, "", false)
 	if err == nil {
 		t.Error("expected error for nonexistent terminal on Linux")
 	}
@@ -79,7 +79,7 @@ func TestLaunchMacOS_DoesNotPanicOnEmptyEnv(t *testing.T) {
 	// We pass an empty env map — it will produce an empty AppleScript command.
 	// osascript may or may not succeed depending on the environment, but it
 	// must not panic.
-	_ = launchMacOS("open", map[string]string{}, "")
+	_ = launchMacOS("open", map[string]string{}, "", false)
 }
 
 // --- Command field ---
@@ -111,5 +111,5 @@ func TestLaunchLinux_WithCommand_DoesNotPanic(t *testing.T) {
 
 	env := map[string]string{"AWS_PROFILE": "prod"}
 	// A nonexistent terminal will error, not panic.
-	_ = launchLinux("/nonexistent/terminal-xyz", env, "aws sso login --sso-session test")
+	_ = launchLinux("/nonexistent/terminal-xyz", env, "aws sso login --sso-session test", false)
 }
