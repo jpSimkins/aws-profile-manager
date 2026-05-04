@@ -403,7 +403,10 @@ jobs:
 
             ```bash
             # Extract
-            tar -xf "AWS Profile Manager-linux-<arch>.tar.xz"
+            tar -xf "AWS.Profile.Manager-linux-<arch>.tar.xz"
+
+            # Change directory
+            cd aws-profile-manager
 
             # System-wide (sudo)
             sudo cp -r usr/local/* /usr/local/
@@ -423,9 +426,9 @@ jobs:
 
             ```bash
             # Unzip and move to Applications
-            unzip "AWS Profile Manager-darwin-<arch>.zip"
-            mv "AWS Profile Manager.app" /Applications/
-            open "/Applications/AWS Profile Manager.app"
+            unzip "AWS.Profile.Manager-darwin-<arch>.zip"
+            mv "AWS.Profile.Manager.app" /Applications/
+            open "/Applications/AWS.Profile.Manager.app"
 
             # If blocked by Gatekeeper:
             # Right-click the app → Open → Open
@@ -435,7 +438,7 @@ jobs:
 
             ### Windows (`.exe`)
 
-            * Download `AWS Profile Manager-windows-amd64.exe`
+            * Download `aws-profile-manager-windows-amd64.exe`
             * Double-click to run
               *(Optional: move to `C:\Program Files\AWS Profile Manager\` and create a Start Menu/Desktop shortcut.)*
 
