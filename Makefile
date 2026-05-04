@@ -314,7 +314,7 @@ package-desktop: fyne-tool ## Package desktop application for distribution
 	"$(GOPATH_BIN)/fyne" package \
 		--icon Icon.png \
 		--name "$(APP_NAME)" \
-		--appID $(APP_ID) \
+		--app-id $(APP_ID) \
 		--release \
 		--src $(MAIN_PATH)
 	@if [ "$(HOST_OS)" = "linux" ]; then \
