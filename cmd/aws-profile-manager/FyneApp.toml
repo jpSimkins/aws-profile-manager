@@ -16,4 +16,4 @@ GenericName = "AWS Profile Manager"
 Categories = ["Utility"]
 Comment = "Manage AWS CLI profiles"
 Keywords = ["aws", "profile", "sso", "cloud"]
-ExecParams = "gui"
+ExecParams = " gui"
