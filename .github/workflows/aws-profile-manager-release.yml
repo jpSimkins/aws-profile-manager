@@ -1,0 +1,526 @@
+name: Release AWS Profile Manager
+
+on:
+  push:
+    tags:
+      - 'aws-profile-manager-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      tool:
+        description: 'Tool to release'
+        required: true
+        default: 'aws-profile-manager'
+        type: choice
+        options:
+          - aws-profile-manager
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip tag creation on tag push
+        if: ${{ github.event_name == 'push' }}
+        run: echo "Tag push detected; skipping tag creation."
+
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Validate inputs
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          TOOL="${{ github.event.inputs.tool }}"
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "✅ Expected: v1.0.0"
+            exit 1
+          fi
+          if [[ ! -d "$TOOL" ]]; then
+            echo "❌ Tool directory not found: $TOOL"
+            exit 1
+          fi
+          echo "✅ Version format OK: $VERSION"
+          echo "✅ Tool directory OK: $TOOL"
+
+      - name: Check if tag already exists
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          TOOL="${{ github.event.inputs.tool }}"
+          TAG="${TOOL}-${VERSION}"
+          git fetch --tags --quiet
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "❌ Tag $TAG already exists. Pick a new version."
+            exit 1
+          fi
+          echo "✅ Tag $TAG does not exist."
+
+      - name: Check for changes in selected tool
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          TOOL="${{ github.event.inputs.tool }}"
+          LATEST_TAG=$(git tag -l "${TOOL}-v*" | sort -V | tail -n1)
+          if [[ -n "$LATEST_TAG" ]]; then
+            echo "📍 Latest tag: $LATEST_TAG"
+            CHANGES=$(git diff --name-only "$LATEST_TAG"..HEAD -- "$TOOL/")
+            if [[ -z "$CHANGES" ]]; then
+              echo "⚠️  No changes detected in $TOOL/ since $LATEST_TAG"
+              echo "Changes since last tag:"
+              git log --oneline "$LATEST_TAG"..HEAD -- "$TOOL/" || true
+            else
+              echo "✅ Changes detected in $TOOL/ since $LATEST_TAG:"
+              echo "$CHANGES"
+            fi
+          else
+            echo "🎉 First release for $TOOL"
+          fi
+
+      - name: Create and push tag
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          TOOL="${{ github.event.inputs.tool }}"
+          TAG="${TOOL}-${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "📝 Creating tag: $TAG"
+          git tag "$TAG"
+          echo "🚀 Pushing tag..."
+          git push origin "$TAG"
+          echo "✅ Tag created."
+          echo "ℹ️ Note: pushes by GITHUB_TOKEN do NOT start a new workflow run."
+          echo "   This same run will continue to build and publish the release."
+
+  test:
+    needs: create-tag
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aws-profile-manager
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./aws-profile-manager/go.mod
+          cache: true
+          cache-dependency-path: ./aws-profile-manager/go.sum
+
+      - name: Install dependencies
+        run: make deps-all
+
+      - name: Run build
+        run: make build-local
+
+      - name: Run tests
+        run: make test
+
+  build-and-release:
+    needs: test
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: macos-latest
+            platform: darwin
+          - os: windows-latest
+            platform: windows
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./aws-profile-manager
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./aws-profile-manager/go.mod
+          cache: true
+          cache-dependency-path: ./aws-profile-manager/go.sum
+
+      - name: Install dependencies
+        run: make deps-all
+
+      - name: Build
+        run: make build-local
+
+      - name: Package desktop applications
+        run: make package-desktop
+
+      - name: List bin contents (Unix)
+        if: ${{ matrix.platform != 'windows' }}
+        shell: bash
+        run: |
+          echo "== $(uname -a) =="
+          ls -la bin || true
+
+      - name: List bin contents (Windows)
+        if: ${{ matrix.platform == 'windows' }}
+        shell: pwsh
+        run: |
+          Write-Host "== $([System.Environment]::OSVersion.VersionString) =="
+          if (Test-Path bin) { Get-ChildItem -Force bin | Format-Table -AutoSize } else { Write-Host "bin not found" }
+
+      - name: Create checksums (Linux)
+        if: ${{ matrix.platform == 'linux' }}
+        run: |
+          cd bin
+          sha256sum * > checksums-linux.txt
+          cat checksums-linux.txt
+
+      - name: Create checksums (macOS)
+        if: ${{ matrix.platform == 'darwin' }}
+        shell: bash
+        run: |
+          cd bin
+          : > checksums-darwin.txt
+          # Only hash files (skip .app directories)
+          find . -maxdepth 1 -type f -print0 | xargs -0 -n1 shasum -a 256 >> checksums-darwin.txt
+          cat checksums-darwin.txt
+
+      - name: Create checksums (Windows)
+        if: ${{ matrix.platform == 'windows' }}
+        shell: pwsh
+        run: |
+          Set-Location bin
+          $out = "checksums-windows.txt"
+          $files = Get-ChildItem -File | Where-Object { $_.Name -ne $out -and $_.Name -notlike "checksums-*.txt" }
+          $lines = foreach ($f in $files) {
+            $h = (Get-FileHash -Algorithm SHA256 -LiteralPath $f.FullName).Hash.ToLower()
+            "$h  $($f.Name)"
+          }
+          $lines | Set-Content -Encoding ascii $out
+          Get-Content $out
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.platform }}
+          if-no-files-found: error
+          path: ${{ github.workspace }}/aws-profile-manager/bin/**
+
+  create-release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Show downloaded artifacts (debug)
+        run: |
+          echo "=== Tree of artifacts ==="
+          ls -laR artifacts || true
+          echo "=== End tree ==="
+
+      - name: Combine checksums (render nice README section)
+        id: checksums
+        run: |
+          echo "checksums<<EOF" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### 📋 File Verification" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "**Quick verification:** Download the checksums file for your platform and run the batch verification command." >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "**Individual verification:** Copy the specific checksum command for your file." >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+
+          for platform in linux darwin windows; do
+            FILE=$(find artifacts -type f -name "checksums-$platform.txt" | head -n1)
+            if [ -n "$FILE" ]; then
+              echo "#### ${platform^} Platform" >> $GITHUB_OUTPUT
+              echo "" >> $GITHUB_OUTPUT
+              echo "**Batch verification:**" >> $GITHUB_OUTPUT
+              if [ "$platform" = "darwin" ]; then
+                echo '```bash' >> $GITHUB_OUTPUT
+                echo "# Download checksums-$platform.txt first" >> $GITHUB_OUTPUT
+                echo "shasum -a 256 -c checksums-$platform.txt" >> $GITHUB_OUTPUT
+                echo '```' >> $GITHUB_OUTPUT
+              elif [ "$platform" = "windows" ]; then
+                echo '```powershell' >> $GITHUB_OUTPUT
+                echo "# Download checksums-$platform.txt and compare manually with:" >> $GITHUB_OUTPUT
+                echo "Get-FileHash -Algorithm SHA256 <filename>" >> $GITHUB_OUTPUT
+                echo '```' >> $GITHUB_OUTPUT
+              else
+                echo '```bash' >> $GITHUB_OUTPUT
+                echo "# Download checksums-$platform.txt first" >> $GITHUB_OUTPUT
+                echo "sha256sum -c checksums-$platform.txt" >> $GITHUB_OUTPUT
+                echo '```' >> $GITHUB_OUTPUT
+              fi
+              echo "" >> $GITHUB_OUTPUT
+              echo "**Individual file verification:**" >> $GITHUB_OUTPUT
+              if [ "$platform" = "windows" ]; then
+                echo '```powershell' >> $GITHUB_OUTPUT
+                while IFS= read -r line; do
+                  checksum=$(echo "$line" | awk '{print $1}')
+                  filename=$(echo "$line" | cut -d' ' -f3-)
+                  [ -n "$checksum" ] && [ -n "$filename" ] && {
+                    echo "# Verify $filename" >> $GITHUB_OUTPUT
+                    echo "# Expected: $checksum" >> $GITHUB_OUTPUT
+                    echo "certutil -hashfile \"$filename\" SHA256" >> $GITHUB_OUTPUT
+                    echo "" >> $GITHUB_OUTPUT
+                  }
+                done < "$FILE"
+                echo '```' >> $GITHUB_OUTPUT
+              else
+                echo '```bash' >> $GITHUB_OUTPUT
+                while IFS= read -r line; do
+                  checksum=$(echo "$line" | awk '{print $1}')
+                  filename=$(echo "$line" | cut -d' ' -f3-)
+                  [ -n "$checksum" ] && [ -n "$filename" ] && {
+                    if [ "$platform" = "darwin" ]; then
+                      echo "echo \"$checksum  $filename\" | shasum -a 256 -c" >> $GITHUB_OUTPUT
+                    else
+                      echo "echo \"$checksum  $filename\" | sha256sum -c" >> $GITHUB_OUTPUT
+                    fi
+                  }
+                done < "$FILE"
+                echo '```' >> $GITHUB_OUTPUT
+              fi
+              echo "" >> $GITHUB_OUTPUT
+            fi
+          done
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/aws-profile-manager-}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: aws-profile-manager-${{ steps.version.outputs.VERSION }}
+          name: AWS Profile Manager ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## AWS Profile Manager ${{ steps.version.outputs.VERSION }}
+
+            ### 🎯 What is this?
+
+            AWS Profile Manager lets you manage AWS CLI profiles via **CLI** or a **Desktop app**.
+
+            ## ✅ Pick the right download
+
+            If you're not sure which CPU you have:
+
+            - **Linux/macOS:** `uname -m` → `x86_64` = amd64, `arm64`/`aarch64` = arm64
+            - **Windows (PowerShell):** `$env:PROCESSOR_ARCHITECTURE` → `AMD64`
+
+            | OS | CPU | **CLI (Terminal)** | **Desktop App (GUI)** |
+            |---|---|---|---|
+            | **Linux** | amd64 (x86_64) | `aws-profile-manager-linux-amd64` | `AWS Profile Manager-linux-amd64.tar.xz` |
+            | **Linux** | arm64 (aarch64) | `aws-profile-manager-linux-arm64` | `AWS Profile Manager-linux-arm64.tar.xz` *(if present)* |
+            | **macOS (Intel)** | amd64 | `aws-profile-manager-darwin-amd64` | `AWS Profile Manager-darwin-amd64.zip` |
+            | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS Profile Manager-darwin-arm64.zip` |
+            | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS Profile Manager-windows-amd64.exe` |
+
+
+            ## 🔐 Verify your download (checksums)
+
+            Each release includes `checksums-<platform>.txt`.
+
+            **Linux**
+            ```bash
+            sha256sum -c checksums-linux.txt
+            ````
+
+            **macOS**
+
+            ```bash
+            shasum -a 256 -c checksums-darwin.txt
+            ```
+
+            **Windows (PowerShell)**
+
+            ```powershell
+            Get-FileHash -Algorithm SHA256 '<your file>'
+            # Compare with checksums-windows.txt
+            ```
+
+            Verify a single file manually (replace placeholders):
+
+            * Linux: `echo '<HASH>  <FILE>' | sha256sum -c`
+            * macOS: `echo '<HASH>  <FILE>' | shasum -a 256 -c`
+
+
+            ## ⚙️ Install — CLI binary
+
+            ### Linux
+
+            ```bash
+            # Make executable & run in place
+            chmod +x aws-profile-manager-linux-<arch>
+            ./aws-profile-manager-linux-<arch> --help
+
+            # Optional: install to PATH
+            sudo mv aws-profile-manager-linux-<arch> /usr/local/bin/aws-profile-manager
+            # or user-local:
+            mkdir -p ~/.local/bin
+            mv aws-profile-manager-linux-<arch> ~/.local/bin/aws-profile-manager
+            ```
+
+            ### macOS
+
+            ```bash
+            chmod +x aws-profile-manager-darwin-<arch>
+            ./aws-profile-manager-darwin-<arch> --help
+
+            # Optional: install to PATH
+            sudo mv aws-profile-manager-darwin-<arch> /usr/local/bin/aws-profile-manager
+
+            # If Gatekeeper blocks the first launch:
+            xattr -dr com.apple.quarantine /usr/local/bin/aws-profile-manager
+            ```
+
+            ### Windows (PowerShell)
+
+            ```powershell
+            .\aws-profile-manager-windows-amd64.exe --help
+            # Optional: move to a folder on PATH (e.g., C:\Tools) and add it to PATH
+            ```
+
+
+            ## 🖥️ Install — Desktop app (GUI)
+
+            ### Linux (`.tar.xz`)
+
+            ```bash
+            # Extract
+            tar -xf "AWS Profile Manager-linux-<arch>.tar.xz"
+
+            # System-wide (sudo)
+            sudo cp -r usr/local/* /usr/local/
+            sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
+
+            # Or per-user (no sudo)
+            mkdir -p ~/.local
+            cp -r usr/local/* ~/.local/
+            update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
+
+            # Launch
+            aws-profile-manager
+            # or find “AWS Profile Manager” in your app menu
+            ```
+
+            ### macOS (`.zip` → `.app`)
+
+            ```bash
+            # Unzip and move to Applications
+            unzip "AWS Profile Manager-darwin-<arch>.zip"
+            mv "AWS Profile Manager.app" /Applications/
+            open "/Applications/AWS Profile Manager.app"
+
+            # If blocked by Gatekeeper:
+            # Right-click the app → Open → Open
+            # or:
+            xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
+            ```
+
+            ### Windows (`.exe`)
+
+            * Download `AWS Profile Manager-windows-amd64.exe`
+            * Double-click to run
+              *(Optional: move to `C:\Program Files\AWS Profile Manager\` and create a Start Menu/Desktop shortcut.)*
+
+            ---
+
+            ${{ steps.checksums.outputs.checksums }}
+
+            ---
+
+            ## 🚀 Quick start
+
+            ```bash
+            aws-profile-manager --help
+            aws-profile-manager --cheatsheet-only
+            ```
+
+            Config writes to:
+
+            * Linux/macOS: `~/.aws/config`
+            * Windows: `%UserProfile%\.aws\config`
+
+            ---
+
+            ## 🧹 Uninstall
+
+            **CLI**
+
+            * Remove the copied binary (e.g., `/usr/local/bin/aws-profile-manager`) or delete the `.exe` on Windows.
+
+            **Linux Desktop**
+
+            ```bash
+            # System-wide
+            sudo rm -f /usr/local/bin/aws-profile-manager
+            sudo rm -f /usr/local/share/applications/com.son9ne.aws-profile-manager.desktop
+            sudo rm -f /usr/local/share/pixmaps/com.son9ne.aws-profile-manager.png
+            sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
+
+            # Per-user
+            rm -f ~/.local/bin/aws-profile-manager
+            rm -f ~/.local/share/applications/com.son9ne.aws-profile-manager.desktop
+            rm -f ~/.local/share/pixmaps/com.son9ne.aws-profile-manager.png
+            update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
+            ```
+
+            **macOS**
+            Delete `/Applications/AWS Profile Manager.app`.
+
+            **Windows**
+            Delete the `.exe` (and any shortcuts).
+
+            ---
+
+            ## 🩹 Troubleshooting
+
+            * **macOS “unidentified developer” or “damaged”**
+              Right-click → **Open** → **Open**, or run:
+
+              ```bash
+              xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
+              ```
+
+            * **Linux GUI issues (blank window / won't launch)**
+              Ensure OpenGL drivers and basic X11/Wayland packages are installed; on headless servers use the CLI.
+
+            * **Windows SmartScreen warning**
+              Click **More info** → **Run anyway** (until builds are code-signed/notarized).
+
+
+
+          files: |
+            artifacts/build-*/aws-profile-manager-*
+            artifacts/build-*/AWS Profile Manager-*.zip
+            artifacts/build-*/AWS Profile Manager-*.tar.xz
+            artifacts/build-*/AWS Profile Manager-*.exe
+            artifacts/build-*/checksums-*.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
