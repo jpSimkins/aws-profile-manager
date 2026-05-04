@@ -57,8 +57,9 @@ func Terminal(profileName, region string) *widget.Button {
 func SsoLogin(sessionName string) *widget.Button {
 	btn := widget.NewButtonWithIcon("", theme.LoginIcon(), func() {
 		cfg := terminal.LaunchConfig{
-			Command:      "aws sso login --sso-session " + sessionName,
-			TerminalPath: settings.Get().Terminal.ExecutablePath,
+			Command:        "aws sso login --sso-session " + sessionName,
+			TerminalPath:   settings.Get().Terminal.ExecutablePath,
+			ExitOnComplete: true,
 		}
 		if err := terminal.LaunchSession(cfg); err != nil {
 			_ = logging.Log.Error("Failed to launch SSO login terminal",

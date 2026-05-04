@@ -26,11 +26,11 @@ func LaunchSession(cfg LaunchConfig) error {
 
 	switch runtime.GOOS {
 	case "darwin":
-		return launchMacOS(terminal, env, cfg.Command)
+		return launchMacOS(terminal, env, cfg.Command, cfg.ExitOnComplete)
 	case "windows":
-		return launchWindows(terminal, env, cfg.Command)
+		return launchWindows(terminal, env, cfg.Command, cfg.ExitOnComplete)
 	default:
-		return launchLinux(terminal, env, cfg.Command)
+		return launchLinux(terminal, env, cfg.Command, cfg.ExitOnComplete)
 	}
 }
 
@@ -38,14 +38,17 @@ func LaunchSession(cfg LaunchConfig) error {
 // environment variables are visible to the interactive shell inside.
 //
 // When command is non-empty it is appended after the export statements so it
-// runs immediately when the window opens. The terminal stays open after the
-// command exits (Terminal.app default behaviour).
-func launchMacOS(_ string, env map[string]string, command string) error {
+// runs immediately when the window opens. Unless ExitOnComplete is true the
+// terminal stays open after the command exits (Terminal.app default behaviour).
+func launchMacOS(_ string, env map[string]string, command string, exitOnComplete bool) error {
 	exports := buildExportStatements(env)
 	parts := make([]string, len(exports))
 	copy(parts, exports)
 	if command != "" {
 		parts = append(parts, command)
+		if exitOnComplete {
+			parts = append(parts, "exit")
+		}
 	}
 	script := fmt.Sprintf(
 		`tell application "Terminal" to do script "%s"`,
@@ -62,9 +65,10 @@ func launchMacOS(_ string, env map[string]string, command string) error {
 // launchWindows opens a new cmd.exe (or Windows Terminal) window with the
 // AWS environment variables set via the `set` command.
 //
-// When command is non-empty it is run after the env vars are set, then an
-// interactive cmd session opens so the user can inspect the output.
-func launchWindows(terminal string, env map[string]string, command string) error {
+// When command is non-empty it is run after the env vars are set. Unless
+// ExitOnComplete is true an interactive cmd session opens afterwards so the
+// user can inspect the output.
+func launchWindows(terminal string, env map[string]string, command string, exitOnComplete bool) error {
 	var sets []string
 	for k, v := range env {
 		sets = append(sets, fmt.Sprintf("set %s=%s", k, v))
@@ -72,7 +76,9 @@ func launchWindows(terminal string, env map[string]string, command string) error
 	if command != "" {
 		sets = append(sets, command)
 	}
-	sets = append(sets, "cmd /k") // drop into interactive shell when done
+	if !exitOnComplete {
+		sets = append(sets, "cmd /k") // drop into interactive shell when done
+	}
 
 	args := []string{"/c", "start", terminal, "/k", strings.Join(sets, " & ")}
 	cmd := exec.Command("cmd.exe", args...)
@@ -86,9 +92,10 @@ func launchWindows(terminal string, env map[string]string, command string) error
 // launchLinux opens a new terminal window, passing the AWS environment via
 // the terminal's -e flag to execute a shell with the variables exported.
 //
-// When command is non-empty it is inserted before `exec bash --login` so it
-// runs immediately and the user sees its output before the interactive prompt.
-func launchLinux(terminal string, env map[string]string, command string) error {
+// When command is non-empty it is inserted before the interactive shell so it
+// runs immediately and the user sees its output. When ExitOnComplete is true
+// the `exec bash --login` tail is omitted so the window closes on completion.
+func launchLinux(terminal string, env map[string]string, command string, exitOnComplete bool) error {
 	exports := buildExportStatements(env)
 	// Build a shell snippet: export vars, optionally run command, then open
 	// an interactive login shell. exec bash replaces the intermediate shell.
@@ -96,7 +103,9 @@ func launchLinux(terminal string, env map[string]string, command string) error {
 	if command != "" {
 		shellCmd += "; " + command
 	}
-	shellCmd += "; exec bash --login"
+	if !exitOnComplete {
+		shellCmd += "; exec bash --login"
+	}
 
 	args := terminalArgs(terminal, shellCmd)
 	cmd := exec.Command(terminal, args...)

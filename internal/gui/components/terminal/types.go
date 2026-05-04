@@ -48,6 +48,12 @@ type LaunchConfig struct {
 	// TerminalPath overrides the resolved terminal executable for this launch.
 	// Leave empty to use settings or the OS default.
 	TerminalPath string
+
+	// ExitOnComplete closes the terminal window as soon as Command finishes.
+	// When false (default) the terminal drops into an interactive shell after
+	// the command exits so the user can inspect output or run further commands.
+	// Has no effect when Command is empty.
+	ExitOnComplete bool
 }
 
 // envVars builds the map of environment variables to inject into the terminal.
