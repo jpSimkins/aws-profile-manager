@@ -4,6 +4,7 @@
 [![CodeQL](https://github.com/jpSimkins/aws-profile-manager/workflows/Security%20Scans/badge.svg)](https://github.com/jpSimkins/aws-profile-manager/actions/workflows/security.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jpSimkins/aws-profile-manager/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jpSimkins/aws-profile-manager)
 [![Built with AI Assistance](https://img.shields.io/badge/built%20with-AI%20assistance-blue)](https://github.com/features/copilot)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/jpSimkins)
 
 **Stop managing AWS profiles manually. Let your configuration do the work.**
 
@@ -288,6 +289,14 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 - **[Developer Guide](DEVELOPER.md)** - Complete development setup and workflow
 
 Before contributing, please review our coding standards in [`.github/copilot-instructions.md`](.github/copilot-instructions.md).
+
+## Support This Project
+
+If you find AWS Profile Manager useful, consider supporting its development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-orange?logo=buy-me-a-coffee&style=for-the-badge)](https://www.buymeacoffee.com/jpSimkins)
+
+Your support helps maintain and improve this tool for the entire community. Thank you! ☕
 
 ## License
 
