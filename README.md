@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CodeQL](https://github.com/jpSimkins/aws-profile-manager/workflows/Security%20Scans/badge.svg)](https://github.com/jpSimkins/aws-profile-manager/actions/workflows/security.yml)
-[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/jpSimkins/aws-profile-manager?label=openssf%20scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/jpSimkins/aws-profile-manager)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/jpSimkins/aws-profile-manager/badge)](https://securityscorecards.dev/viewer/?uri=github.com/jpSimkins/aws-profile-manager)
 [![Built with AI Assistance](https://img.shields.io/badge/built%20with-AI%20assistance-blue)](https://github.com/features/copilot)
 
 **Stop managing AWS profiles manually. Let your configuration do the work.**
