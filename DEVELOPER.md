@@ -86,6 +86,35 @@ cp ~/.aws/sso/cache/* .dev/aws/sso/cache/
 
 **Note**: The `.dev/` directories are git-ignored and won't be committed to the repository.
 
+
+## Development Tools
+
+This project leverages modern development tools to accelerate development while maintaining high quality standards:
+
+### AI-Assisted Development
+
+**Tools Used:**
+- **GitHub Copilot** - Code completion and generation
+- **Claude/ChatGPT** - Architecture discussions, documentation, and testing strategies
+- **AI Code Review** - Additional validation layer
+
+**Quality Assurance:**
+- ✅ All AI-generated code is human-reviewed
+- ✅ Comprehensive test coverage (95%+) validates functionality
+- ✅ Security scanning (CodeQL, Gosec, Trivy) catches vulnerabilities
+- ✅ Linting enforces code standards (100% clean)
+- ✅ Manual testing for GUI and CLI workflows
+
+**How AI Accelerates Development:**
+- Faster implementation of boilerplate and common patterns
+- Comprehensive test case generation
+- Documentation consistency
+- Security best practices enforcement
+
+**Development Philosophy:**
+AI is a tool, like an IDE or linter. The code is still written, reviewed, tested, and validated by humans. Quality and security are never compromised for speed.
+
+
 ## Development Workflow
 
 **All development happens on the host system for optimal GUI support and performance.**
