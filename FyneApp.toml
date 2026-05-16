@@ -1,0 +1,18 @@
+Website = "https://github.com/jpSimkins/aws-profile-manager"
+
+[Details]
+Icon = "Icon.png"
+Name = "AWS Profile Manager"
+ID = "com.son9ne.aws-profile-manager"
+Version = "0.2.2"
+Build = 10
+
+[Source]
+Repo = "https://github.com/jpSimkins/aws-profile-manager"
+
+[LinuxAndBSD]
+GenericName = "AWS Profile Manager"
+Categories = ["Utility"]
+Comment = "Manage AWS CLI profiles"
+Keywords = ["aws", "profile", "sso", "cloud"]
+ExecParams = " gui"
