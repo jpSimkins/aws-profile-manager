@@ -20,6 +20,7 @@
     "make:fmt": "make fmt",
     "make:lint": "make lint",
     "make:vet": "make vet",
+    "make:vuln": "make vuln",
     "make:clean": "make clean",
     "make:help": "make help",
     "setup": "make deps-all"

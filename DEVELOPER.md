@@ -5,7 +5,7 @@ This guide is for developers who want to contribute to or modify the AWS Profile
 ## Quick Start
 
 ### Prerequisites
-- Go 1.22+ (for building and running)
+- Go 1.25.10+ (for building and running)
 - Node.js/npm (for convenience scripts)
 - System dependencies for GUI (automatically installed via make)
 
@@ -101,7 +101,7 @@ This project leverages modern development tools to accelerate development while 
 **Quality Assurance:**
 - ✅ All AI-generated code is human-reviewed
 - ✅ Comprehensive test coverage (95%+) validates functionality
-- ✅ Security scanning (CodeQL, Gosec, Trivy) catches vulnerabilities
+- ✅ Vulnerability scanning (`govulncheck`) catches known CVEs in dependencies
 - ✅ Linting enforces code standards (100% clean)
 - ✅ Manual testing for GUI and CLI workflows
 
@@ -127,15 +127,16 @@ AI is a tool, like an IDE or linter. The code is still written, reviewed, tested
 npm run make:test-coverage  # Run tests with coverage (most used)
 npm run make:fmt           # Format code  
 npm run make:lint          # Lint code
-npm run build              # Build the application
+npm run make:vuln          # Run vulnerability scan
+npm run make:build         # Build the application
 
 # 2. SECONDARY: Use make for development-specific tasks
 make deps-system          # Install GUI system dependencies
 make help                 # See all available commands
 
 # 3. DIRECT: Use go commands for specific development tasks
-go run src/main.go gui    # Run GUI directly for testing
-go run src/main.go --help # CLI help
+go run ./cmd/aws-profile-manager/main.go gui    # Run GUI directly for testing
+go run ./cmd/aws-profile-manager/main.go --help # CLI help
 ./bin/aws-profile-manager # Use built binary
 ```
 
@@ -144,16 +145,22 @@ go run src/main.go --help # CLI help
 ### Available npm Scripts
 - **`npm run setup`** - One-time setup (install dependencies + GUI libraries)
 - **`npm run sync-dev-data`** - Sync AWS CLI config/cache to development directories
-- **`npm run build`** - Build application binary
-- **`npm run run:gui`** - Build and launch GUI for testing
+- **`npm run reset-dev`** - Reset development data (clears AWS config, cache, cheat sheet)
+- **`npm run make:build`** - Build application binary
+- **`npm run make:build:all`** - Build for all supported platforms
 - **`npm run make:test`** - Run tests
+- **`npm run make:test-verbose`** - Run tests with verbose output
 - **`npm run make:test-coverage`** - Run tests with coverage report (most used)
-- **`npm run make:lint`** - Run code linter
 - **`npm run make:fmt`** - Format Go code
+- **`npm run make:lint`** - Run code linter
 - **`npm run make:vet`** - Run go vet static analysis
+- **`npm run make:vuln`** - Run vulnerability scanner (govulncheck)
 - **`npm run make:clean`** - Clean build artifacts
 - **`npm run make:help`** - Show all make targets
-- **`npm run exec`** - Run arbitrary commands in container
+- **`npm run run:go:gui`** - Run GUI directly via `go run` (no build step)
+- **`npm run run:go:gui:debug`** - Run GUI via `go run` with debug logging
+- **`npm run run:local:gui`** - Run the built local binary GUI
+- **`npm run run:local:gui:debug`** - Run the built local binary GUI with debug logging
 
 ## Architecture Overview
 
@@ -341,7 +348,7 @@ logging.Log.Infof("Processing", "count", count) // Wrong! Use Info()
 - **Native Integration** - Better integration with host system tools and environment
 
 #### System Requirements
-- **Go 1.22+** - For building and running the application
+- **Go 1.25.10+** - For building and running the application
 - **OpenGL libraries** - Automatically installed via `make deps-system`
 - **AWS CLI** - For testing session management (optional)
 
@@ -416,12 +423,14 @@ go run ./cmd/aws-profile-manager/main.go gui      # Launch GUI directly
 ## Contributing
 
 ### Before Submitting PRs
-1. Run full test suite: `npm run make:test-coverage`
-2. Ensure code formatting: `npm run make:fmt` 
+1. Format code: `npm run make:fmt`
+2. Run static analysis: `npm run make:vet`
 3. Run linter: `npm run make:lint`
-4. Run static analysis: `npm run make:vet`
-5. Update tests for new functionality
-6. Maintain or improve test coverage
+4. Run vulnerability scan: `npm run make:vuln`
+5. Run full test suite: `npm run make:test-coverage`
+6. Verify build succeeds: `npm run make:build`
+7. Update tests for new functionality
+8. Maintain or improve test coverage
 
 ### Development Best Practices
 - Use npm scripts as the primary interface for development tasks
@@ -434,9 +443,8 @@ go run ./cmd/aws-profile-manager/main.go gui      # Launch GUI directly
 ## Future Development
 
 ### Planned Features
-- Enhanced GUI implementation
+- Enhanced GUI implementation (additional views: installer, sync, profiles, sessions)
 - Advanced AWS session management
-- Profile import/export functionality
 - Cross-platform installers
 
 ### Architecture Goals
