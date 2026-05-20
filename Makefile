@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet vuln package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -91,6 +91,8 @@ deps-dev: ## Install developer tools (linters, debugger)
 	@GOBIN="$(GOPATH_BIN)" go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	@echo "• dlv (Delve debugger)"
 	@GONOSUMDB=* GOBIN="$(GOPATH_BIN)" go install github.com/go-delve/delve/cmd/dlv@latest
+	@echo "• govulncheck"
+	@GOBIN="$(GOPATH_BIN)" go install golang.org/x/vuln/cmd/govulncheck@latest
 
 # -----------------------------------------------------------------------------
 # Convenience: Install both Go and system deps
@@ -205,6 +207,11 @@ lint: ## Run linter
 vet: ## Run go vet
 	@echo "Running go vet..."
 	go vet $(CMD_DIR)/... $(SRC_DIR)/...
+
+vuln: ## Run vulnerability scanner (govulncheck)
+	@command -v "$(GOPATH_BIN)/govulncheck" >/dev/null 2>&1 || $(MAKE) deps-dev
+	@echo "Running vulnerability scan..."
+	"$(GOPATH_BIN)/govulncheck" ./...
 
 # -----------------------------------------------------------------------------
 # Installation (Linux only for now)
