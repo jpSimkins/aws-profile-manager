@@ -21,6 +21,7 @@
     "make:lint": "make lint",
     "make:vet": "make vet",
     "make:vuln": "make vuln",
+    "make:vuln-verbose": "make vuln-verbose",
     "make:clean": "make clean",
     "make:help": "make help",
     "setup": "make deps-all"

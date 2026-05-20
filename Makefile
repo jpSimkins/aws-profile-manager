@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet vuln package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -212,6 +212,11 @@ vuln: ## Run vulnerability scanner (govulncheck)
 	@command -v "$(GOPATH_BIN)/govulncheck" >/dev/null 2>&1 || $(MAKE) deps-dev
 	@echo "Running vulnerability scan..."
 	"$(GOPATH_BIN)/govulncheck" ./...
+
+vuln-verbose: ## Run vulnerability scanner with full details (includes non-called vulns)
+	@command -v "$(GOPATH_BIN)/govulncheck" >/dev/null 2>&1 || $(MAKE) deps-dev
+	@echo "Running vulnerability scan (verbose)..."
+	"$(GOPATH_BIN)/govulncheck" -show verbose ./...
 
 # -----------------------------------------------------------------------------
 # Installation (Linux only for now)
