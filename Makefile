@@ -10,6 +10,7 @@ SRC_DIR := ./internal
 CMD_DIR := ./cmd
 APP_NAME := AWS Profile Manager
 APP_ID := com.son9ne.aws-profile-manager
+FYNE_METADATA_FILE := $(MAIN_PATH)/FyneApp.toml
 
 # Version information (can be overridden)
 # Priority: explicit VERSION= override → git tag → version.go constant → fallback
@@ -33,14 +34,9 @@ HOST_OS   := $(shell go env GOOS)
 HOST_ARCH := $(shell go env GOARCH)
 SUFFIX    := $(HOST_OS)-$(HOST_ARCH)
 
-FYNE_SOURCE_ARG :=
-FYNE_ICON_ARG :=
-FYNE_APP_ID_ARG :=
-ifeq ($(HOST_OS),windows)
 FYNE_SOURCE_ARG := --source-dir $(MAIN_PATH)
 FYNE_ICON_ARG := --icon Icon.png
 FYNE_APP_ID_ARG := --app-id $(APP_ID)
-endif
 
 # Proper extension for current host (used by build)
 EXE_EXT :=
@@ -336,8 +332,8 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 	@mkdir -p $(BUILD_DIR)
 	@echo "Stamping FyneApp.toml with app version $(APP_VERSION) (from $(VERSION))..."
 	@tmp_file=$$(mktemp); \
-		sed 's/^Version = .*/Version = "$(APP_VERSION)"/' FyneApp.toml > "$$tmp_file" && \
-		mv "$$tmp_file" FyneApp.toml
+		sed 's/^Version = .*/Version = "$(APP_VERSION)"/' $(FYNE_METADATA_FILE) > "$$tmp_file" && \
+		mv "$$tmp_file" $(FYNE_METADATA_FILE)
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
 		$(FYNE_SOURCE_ARG) \
