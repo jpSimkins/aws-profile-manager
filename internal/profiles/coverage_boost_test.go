@@ -310,7 +310,7 @@ func TestDeleteFile_PermissionError(t *testing.T) {
 
 	// Normal delete should work
 	path := filepath.Join(test.GetTestConfigDir(t), "to-delete")
-	_ = os.WriteFile(path, []byte("test"), 0644)
+	_ = os.WriteFile(path, []byte("test"), 0600)
 
 	deleted, err := deleteFile(path)
 	if err != nil {
@@ -392,7 +392,7 @@ func TestImporter_Import_PartialSections(t *testing.T) {
 	schema := schematest.NewMixedSimple()
 	backupPath := filepath.Join(test.GetTestConfigDir(t), "partial-backup.json")
 	data, _ := os.ReadFile(backupPath)
-	_ = os.WriteFile(backupPath, data, 0644)
+	_ = os.WriteFile(backupPath, data, 0600)
 
 	// Install original
 	installer := NewInstaller(config)

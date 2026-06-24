@@ -66,7 +66,7 @@ func TestRunSyncFetch_LocalStrategy(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 
@@ -116,7 +116,7 @@ func TestRunSyncStatus_Enabled(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 
@@ -146,7 +146,7 @@ func TestRunSyncClearCache(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 
@@ -154,7 +154,7 @@ func TestRunSyncClearCache(t *testing.T) {
 	cacheDir := test.GetTestCacheDir(t)
 	cacheFile := filepath.Join(cacheDir, "sync-config.json")
 	cacheData := []byte(`{"Data":{"version":"1.0","managed":{"organizations":{}}},"FetchTime":"2024-01-01T00:00:00Z","Source":"test","Strategy":"local"}`)
-	if err := os.WriteFile(cacheFile, cacheData, 0644); err != nil {
+	if err := os.WriteFile(cacheFile, cacheData, 0600); err != nil {
 		t.Fatalf("Failed to create cache file: %v", err)
 	}
 
@@ -211,7 +211,7 @@ func TestRunSyncFetch_WithForceFlag(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 
@@ -242,7 +242,7 @@ func TestRunSyncFetch_VerboseMode(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 

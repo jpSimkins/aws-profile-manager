@@ -170,7 +170,7 @@ region = us-east-1`,
 
 			// Create existing config if provided
 			if tt.existingConfig != "" {
-				if err := os.WriteFile(configPath, []byte(tt.existingConfig), 0644); err != nil {
+				if err := os.WriteFile(configPath, []byte(tt.existingConfig), 0600); err != nil {
 					t.Fatalf("Failed to create existing config: %v", err)
 				}
 			}

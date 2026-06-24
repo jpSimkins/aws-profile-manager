@@ -17,7 +17,7 @@ func TestLocalFetcher_Success(t *testing.T) {
 	// Create test file
 	testFile := filepath.Join(test.GetTestConfigDir(t), "test-config.json")
 	testData := []byte(`{"version": "1.0", "managed": {"organizations": {}}}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -106,7 +106,7 @@ func TestLocalFetcher_ProgressReporting(t *testing.T) {
 	// Create test file
 	testFile := filepath.Join(test.GetTestConfigDir(t), "test-config.json")
 	testData := []byte(`{"version": "1.0"}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 

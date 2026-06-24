@@ -39,7 +39,7 @@ func createTestSSOCacheWithURL(t *testing.T, cacheDir string, fileName string, i
 		t.Fatalf("Failed to marshal cache data: %v", err)
 	}
 
-	err = os.WriteFile(filepath.Join(cacheDir, fileName), data, 0644)
+	err = os.WriteFile(filepath.Join(cacheDir, fileName), data, 0600)
 	if err != nil {
 		t.Fatalf("Failed to write cache file: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestNewSessionManager(t *testing.T) {
 			if tt.setupExtractor {
 				test.SetupTestEnvironment(t)
 				configFile := test.GetTestAwsConfigPath(t)
-				err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0644)
+				err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0600)
 				if err != nil {
 					t.Fatalf("Failed to create config file: %v", err)
 				}
@@ -152,7 +152,7 @@ func TestGetSessionStatus(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			test.SetupTestEnvironment(t)
 			ssoDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-			err := os.MkdirAll(ssoDir, 0755)
+			err := os.MkdirAll(ssoDir, 0700)
 			if err != nil {
 				t.Fatalf("Failed to create SSO directory: %v", err)
 			}
@@ -180,7 +180,7 @@ func TestGetSessionStatus(t *testing.T) {
 func TestRefreshSessionStatus(t *testing.T) {
 	test.SetupTestEnvironment(t)
 	ssoDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-	err := os.MkdirAll(ssoDir, 0755)
+	err := os.MkdirAll(ssoDir, 0700)
 	if err != nil {
 		t.Fatalf("Failed to create SSO directory: %v", err)
 	}
@@ -217,7 +217,7 @@ func TestRefreshSessionStatus(t *testing.T) {
 func TestClearExpiredCache(t *testing.T) {
 	test.SetupTestEnvironment(t)
 	ssoDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-	err := os.MkdirAll(ssoDir, 0755)
+	err := os.MkdirAll(ssoDir, 0700)
 	if err != nil {
 		t.Fatalf("Failed to create SSO directory: %v", err)
 	}
@@ -293,7 +293,7 @@ func TestLoginToSession(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			test.SetupTestEnvironment(t)
 			ssoDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-			err := os.MkdirAll(ssoDir, 0755)
+			err := os.MkdirAll(ssoDir, 0700)
 			if err != nil {
 				t.Fatalf("Failed to create SSO directory: %v", err)
 			}
@@ -333,7 +333,7 @@ func TestLogout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			test.SetupTestEnvironment(t)
 			ssoDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-			err := os.MkdirAll(ssoDir, 0755)
+			err := os.MkdirAll(ssoDir, 0700)
 			if err != nil {
 				t.Fatalf("Failed to create SSO directory: %v", err)
 			}
@@ -361,7 +361,7 @@ func TestLogout(t *testing.T) {
 func TestGetCacheDir(t *testing.T) {
 	test.SetupTestEnvironment(t)
 	cacheDir := filepath.Join(test.GetTestAwsDir(t), "sso")
-	err := os.MkdirAll(cacheDir, 0755)
+	err := os.MkdirAll(cacheDir, 0700)
 	if err != nil {
 		t.Fatalf("Failed to create cache directory: %v", err)
 	}

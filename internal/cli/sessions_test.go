@@ -18,7 +18,7 @@ func TestRunSessions_NoSessions(t *testing.T) {
 	content := `[profile test]
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -52,7 +52,7 @@ sso_account_id = 123456789012
 sso_role_name = Developer
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -84,7 +84,7 @@ sso_account_id = 123456789012
 sso_role_name = Developer
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -117,14 +117,14 @@ sso_account_id = 123456789012
 sso_role_name = Developer
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
 	// Create expired SSO cache file
 	awsDir := test.GetTestAwsDir(t)
 	ssoCacheDir := filepath.Join(awsDir, "sso", "cache")
-	if err := os.MkdirAll(ssoCacheDir, 0755); err != nil {
+	if err := os.MkdirAll(ssoCacheDir, 0700); err != nil {
 		t.Fatalf("Failed to create SSO cache dir: %v", err)
 	}
 
@@ -137,7 +137,7 @@ region = us-east-1
 		"accessToken": "expired-token",
 		"expiresAt": "` + expiredTime.Format(time.RFC3339) + `"
 	}`
-	if err := os.WriteFile(cacheFile, []byte(cacheContent), 0644); err != nil {
+	if err := os.WriteFile(cacheFile, []byte(cacheContent), 0600); err != nil {
 		t.Fatalf("Failed to write cache file: %v", err)
 	}
 
@@ -162,7 +162,7 @@ func TestRunSessions_VerboseMode(t *testing.T) {
 	content := `[profile test]
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 

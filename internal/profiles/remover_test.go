@@ -84,7 +84,7 @@ func TestRemover_Remove_NoManagedSection(t *testing.T) {
 	configContent := `[profile personal]
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 
@@ -211,7 +211,7 @@ region = us-west-2
 [profile personal-below]
 region = us-west-1
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 
@@ -345,7 +345,7 @@ func TestRemover_Remove_DryRun_WithCheatSheet(t *testing.T) {
 	config := newTestConfig(t)
 	customCheatSheetPath := filepath.Join(test.GetTestDesktopDir(t), "dry-run-cheat-sheet.md")
 
-	if err := os.WriteFile(customCheatSheetPath, []byte("content"), 0644); err != nil {
+	if err := os.WriteFile(customCheatSheetPath, []byte("content"), 0600); err != nil {
 		t.Fatalf("Failed to create cheat sheet: %v", err)
 	}
 

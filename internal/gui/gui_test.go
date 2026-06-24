@@ -123,7 +123,7 @@ func TestApp_handleSyncNow(t *testing.T) {
 	configDir := test.GetTestConfigDir(t)
 	testConfigFile := filepath.Join(configDir, "test-config.json")
 	testConfigData := []byte(`{"version":"2.0","managed":{},"unmanaged":{}}`)
-	if err := os.WriteFile(testConfigFile, testConfigData, 0644); err != nil {
+	if err := os.WriteFile(testConfigFile, testConfigData, 0600); err != nil {
 		t.Fatalf("Failed to create test config: %v", err)
 	}
 

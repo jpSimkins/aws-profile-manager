@@ -25,7 +25,7 @@ func TestSync_LocalSuccess(t *testing.T) {
 			"organizations": {}
 		}
 	}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -67,7 +67,7 @@ func TestSync_CacheHit(t *testing.T) {
 		"version": "1.0",
 		"managed": {"organizations": {}}
 	}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -109,7 +109,7 @@ func TestSync_ForceRefresh(t *testing.T) {
 		"version": "1.0",
 		"managed": {"organizations": {}}
 	}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -157,7 +157,7 @@ func TestSync_InvalidJSON(t *testing.T) {
 
 	// Create file with invalid JSON
 	testFile := filepath.Join(test.GetTestConfigDir(t), "bad-config.json")
-	if err := os.WriteFile(testFile, []byte("not valid json"), 0644); err != nil {
+	if err := os.WriteFile(testFile, []byte("not valid json"), 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -261,7 +261,7 @@ func TestSync_ProgressReporting(t *testing.T) {
 		"version": "1.0",
 		"managed": {"organizations": {}}
 	}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -305,7 +305,7 @@ func TestSync_InvalidSchemaRejected(t *testing.T) {
 		"invalid": "data",
 		"missing": "required fields"
 	}`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -345,7 +345,7 @@ func TestSync_MalformedJSONRejected(t *testing.T) {
 	testData := []byte(`{
 		"invalid json": "missing closing brace"
 	`)
-	if err := os.WriteFile(testFile, testData, 0644); err != nil {
+	if err := os.WriteFile(testFile, testData, 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -494,7 +494,7 @@ func TestSync_OptionalFields(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testFile := filepath.Join(test.GetTestConfigDir(t), "config.json")
-			if err := os.WriteFile(testFile, []byte(tt.jsonData), 0644); err != nil {
+			if err := os.WriteFile(testFile, []byte(tt.jsonData), 0600); err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
 

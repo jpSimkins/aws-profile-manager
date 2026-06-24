@@ -48,7 +48,7 @@ func TestReadConfigFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create test file
 			tmpFile := filepath.Join(test.GetTestConfigDir(t), "test.txt")
-			if err := os.WriteFile(tmpFile, []byte(tt.content), 0644); err != nil {
+			if err := os.WriteFile(tmpFile, []byte(tt.content), 0600); err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
 
@@ -105,7 +105,7 @@ func TestReadFileContent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tmpFile := filepath.Join(test.GetTestConfigDir(t), "content-test.txt")
-			if err := os.WriteFile(tmpFile, []byte(tt.content), 0644); err != nil {
+			if err := os.WriteFile(tmpFile, []byte(tt.content), 0600); err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
 
@@ -279,7 +279,7 @@ func TestDeleteFile(t *testing.T) {
 			tmpFile := filepath.Join(test.GetTestConfigDir(t), "delete-test.txt")
 
 			if tt.createFile {
-				if err := os.WriteFile(tmpFile, []byte("test"), 0644); err != nil {
+				if err := os.WriteFile(tmpFile, []byte("test"), 0600); err != nil {
 					t.Fatalf("Failed to create test file: %v", err)
 				}
 			}
@@ -333,13 +333,13 @@ func TestFileExists(t *testing.T) {
 			testPath := filepath.Join(test.GetTestConfigDir(t), "exists-test-"+tt.name)
 
 			if tt.createFile {
-				if err := os.WriteFile(testPath, []byte("test"), 0644); err != nil {
+				if err := os.WriteFile(testPath, []byte("test"), 0600); err != nil {
 					t.Fatalf("Failed to create test file: %v", err)
 				}
 			}
 
 			if tt.createDir {
-				if err := os.MkdirAll(testPath, 0755); err != nil {
+				if err := os.MkdirAll(testPath, 0700); err != nil {
 					t.Fatalf("Failed to create test directory: %v", err)
 				}
 			}
@@ -378,7 +378,7 @@ func TestEnsureDirectory(t *testing.T) {
 			dir := filepath.Join(test.GetTestConfigDir(t), "ensuredir", tt.name)
 
 			if tt.createDir {
-				if err := os.MkdirAll(dir, 0755); err != nil {
+				if err := os.MkdirAll(dir, 0700); err != nil {
 					t.Fatalf("Failed to create test directory: %v", err)
 				}
 			}
@@ -440,7 +440,7 @@ func TestGetFileSize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tmpFile := filepath.Join(test.GetTestConfigDir(t), "size-test.txt")
-			if err := os.WriteFile(tmpFile, []byte(tt.content), 0644); err != nil {
+			if err := os.WriteFile(tmpFile, []byte(tt.content), 0600); err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
 

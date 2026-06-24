@@ -15,7 +15,7 @@ func TestWriteConfigFile_DirectoryCreationError(t *testing.T) {
 	// Create a file where we want to create a directory
 	baseDir := test.GetTestConfigDir(t)
 	blockingFile := filepath.Join(baseDir, "blocking")
-	_ = os.WriteFile(blockingFile, []byte("block"), 0644)
+	_ = os.WriteFile(blockingFile, []byte("block"), 0600)
 
 	// Try to create config under this file (should fail)
 	configPath := filepath.Join(blockingFile, "config")
@@ -80,7 +80,7 @@ func TestWriteFileContent_DirectoryCreationError(t *testing.T) {
 	// Create a file where we want to create a directory
 	baseDir := test.GetTestConfigDir(t)
 	blockingFile := filepath.Join(baseDir, "blocking2")
-	_ = os.WriteFile(blockingFile, []byte("block"), 0644)
+	_ = os.WriteFile(blockingFile, []byte("block"), 0600)
 
 	// Try to create file under this file (should fail)
 	filePath := filepath.Join(blockingFile, "file.txt")
@@ -121,7 +121,7 @@ func TestReadConfigFile_ScannerError(t *testing.T) {
 	// Normal file should succeed
 	configPath := filepath.Join(test.GetTestConfigDir(t), "scanner-test")
 	testContent := "line1\nline2\nline3"
-	_ = os.WriteFile(configPath, []byte(testContent), 0644)
+	_ = os.WriteFile(configPath, []byte(testContent), 0600)
 
 	lines, err := readConfigFile(configPath)
 	if err != nil {
@@ -163,7 +163,7 @@ func TestDeleteFile_Errors(t *testing.T) {
 
 	t.Run("delete existing file returns true", func(t *testing.T) {
 		path := filepath.Join(test.GetTestConfigDir(t), "to-delete")
-		_ = os.WriteFile(path, []byte("test"), 0644)
+		_ = os.WriteFile(path, []byte("test"), 0600)
 
 		deleted, err := deleteFile(path)
 
@@ -198,7 +198,7 @@ func TestGetFileSize_Errors(t *testing.T) {
 	t.Run("existing file returns correct size", func(t *testing.T) {
 		path := filepath.Join(test.GetTestConfigDir(t), "sized-file")
 		content := "123456789" // 9 bytes
-		_ = os.WriteFile(path, []byte(content), 0644)
+		_ = os.WriteFile(path, []byte(content), 0600)
 
 		size, err := getFileSize(path)
 

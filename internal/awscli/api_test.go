@@ -17,7 +17,7 @@ func TestListProfiles(t *testing.T) {
 
 	// Create test AWS config
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
@@ -42,7 +42,7 @@ sso_region = us-east-1
 sso_registration_scopes = sso:account:access
 `
 
-	if err := os.WriteFile(configPath, []byte(testConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(testConfig), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -200,7 +200,7 @@ func TestListProfilesWithExtractor(t *testing.T) {
 
 	// Create test AWS config
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
@@ -215,7 +215,7 @@ sso_start_url = https://test.awsapps.com/start
 sso_region = us-east-1
 `
 
-	if err := os.WriteFile(configPath, []byte(testConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(testConfig), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -250,7 +250,7 @@ func TestAPIGetSessionStatus(t *testing.T) {
 
 	// Create test AWS config with SSO sessions
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
@@ -266,7 +266,7 @@ sso_region = us-east-1
 sso_registration_scopes = sso:account:access
 `
 
-	if err := os.WriteFile(configPath, []byte(testConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(testConfig), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -337,7 +337,7 @@ func TestGetFilterOptions(t *testing.T) {
 
 	// Create test AWS config with various profiles
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
@@ -365,7 +365,7 @@ sso_region = us-east-1
 sso_registration_scopes = sso:account:access
 `
 
-	if err := os.WriteFile(configPath, []byte(testConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(testConfig), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -517,7 +517,7 @@ func TestListProfiles_Integration(t *testing.T) {
 
 	// Create comprehensive test config
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
@@ -552,7 +552,7 @@ sso_region = us-east-1
 sso_registration_scopes = sso:account:access
 `
 
-	if err := os.WriteFile(configPath, []byte(testConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(testConfig), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -608,11 +608,11 @@ func TestListProfiles_EmptyConfig(t *testing.T) {
 
 	// Create empty config
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil {
 		t.Fatalf("Failed to create directory: %v", err)
 	}
 
-	if err := os.WriteFile(configPath, []byte(""), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(""), 0600); err != nil {
 		t.Fatalf("Failed to write empty config: %v", err)
 	}
 

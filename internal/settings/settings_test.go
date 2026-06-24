@@ -358,7 +358,7 @@ func TestLoadInvalidJSON(t *testing.T) {
 	settingsPath := filepath.Join(configDir, "invalid.json")
 
 	// Write invalid JSON
-	_ = os.WriteFile(settingsPath, []byte("not valid json{"), 0644)
+	_ = os.WriteFile(settingsPath, []byte("not valid json{"), 0600)
 
 	// Load should fail
 	if err := Load(settingsPath); err == nil {

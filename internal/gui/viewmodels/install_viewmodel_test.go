@@ -233,7 +233,7 @@ func TestInstallViewModel_LoadDisplaySchema(t *testing.T) {
 		t.Fatalf("Failed to marshal cache entry: %v", err)
 	}
 
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		t.Fatalf("Failed to create cache dir: %v", err)
 	}
 
@@ -301,7 +301,7 @@ func TestInstallViewModel_StartLoad(t *testing.T) {
 		t.Fatalf("Failed to marshal cache entry: %v", err)
 	}
 
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		t.Fatalf("Failed to create cache dir: %v", err)
 	}
 

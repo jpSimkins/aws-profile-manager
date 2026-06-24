@@ -154,16 +154,22 @@ func NewInstallView(window fyne.Window) fyne.CanvasObject {
 	accordion := widget.NewAccordion(presetsItem, filtersItem)
 	accordion.MultiOpen = true
 
-	// Left pane: Accordion (Presets + Filters) → InstallOptions → Install button
-	leftPaneContent := container.NewVBox(
-		accordion,
+	// Left pane: scrollable accordion (Presets + Filters) on top, fixed
+	// InstallOptions + Install button pinned at the bottom.
+	//
+	// Keeping the install options outside the scroll area prevents filter
+	// checkboxes from visually overlapping with them when the window is small,
+	// and ensures the Install button is always visible without scrolling.
+	accordionScroll := container.NewVScroll(accordion)
+
+	bottomSection := container.NewVBox(
 		widget.NewSeparator(),
 		installOptionsView.GetContent(),
 		widget.NewSeparator(),
 		installButton,
 	)
 
-	leftPaneScroll := container.NewVScroll(leftPaneContent)
+	leftPaneScroll := container.NewBorder(nil, bottomSection, nil, nil, accordionScroll)
 
 	// Split layout
 	split := guiLayouts.NewHorizontalSplitWithLeftRightPaneMinWidths(

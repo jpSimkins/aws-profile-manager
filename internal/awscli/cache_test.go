@@ -53,7 +53,7 @@ sso_session = test-session
 sso_start_url = https://example.awsapps.com/start
 sso_region = us-east-1
 `
-	err := os.WriteFile(configFile, []byte(testConfig), 0644)
+	err := os.WriteFile(configFile, []byte(testConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -93,7 +93,7 @@ sso_session = test-session
 sso_start_url = https://example.awsapps.com/start
 sso_region = us-east-1
 `
-	err := os.WriteFile(configFile, []byte(testConfig), 0644)
+	err := os.WriteFile(configFile, []byte(testConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -136,7 +136,7 @@ func TestGetData_FromCache(t *testing.T) {
 sso_account_id = 123456789012
 sso_role_name = AdminRole
 `
-	err := os.WriteFile(tempConfigFile, []byte(testConfig), 0644)
+	err := os.WriteFile(tempConfigFile, []byte(testConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -169,7 +169,7 @@ func TestForceReload(t *testing.T) {
 	initialConfig := `[profile initial]
 sso_account_id = 111111111111
 `
-	err := os.WriteFile(tempConfigFile, []byte(initialConfig), 0644)
+	err := os.WriteFile(tempConfigFile, []byte(initialConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create initial config: %v", err)
 	}
@@ -194,7 +194,7 @@ sso_account_id = 111111111111
 [profile new-profile]
 sso_account_id = 222222222222
 `
-	err = os.WriteFile(tempConfigFile, []byte(updatedConfig), 0644)
+	err = os.WriteFile(tempConfigFile, []byte(updatedConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to update config: %v", err)
 	}
@@ -218,7 +218,7 @@ func TestClearCache(t *testing.T) {
 	testConfig := `[profile test]
 region = us-east-1
 `
-	err := os.WriteFile(tempConfigFile, []byte(testConfig), 0644)
+	err := os.WriteFile(tempConfigFile, []byte(testConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}
@@ -261,13 +261,13 @@ func TestHasCache(t *testing.T) {
 	}
 
 	// Create cache directory first
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		t.Fatalf("Failed to create cache directory: %v", err)
 	}
 
 	// Create a dummy cache file
 	cachePath := filepath.Join(cacheDir, CacheFileName)
-	err := os.WriteFile(cachePath, []byte("{}"), 0644)
+	err := os.WriteFile(cachePath, []byte("{}"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create dummy cache file: %v", err)
 	}
@@ -283,7 +283,7 @@ func TestNeedsReload_NoCache(t *testing.T) {
 	tempConfigFile := test.GetTestAwsConfigPath(t)
 
 	// Create config file
-	err := os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-east-1"), 0644)
+	err := os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-east-1"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}
@@ -307,7 +307,7 @@ func TestNeedsReload_CacheNewer(t *testing.T) {
 
 	// Create config file
 	configContent := "[default]\nregion = us-east-1"
-	err := os.WriteFile(tempConfigFile, []byte(configContent), 0644)
+	err := os.WriteFile(tempConfigFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}
@@ -337,7 +337,7 @@ func TestNeedsReload_ConfigNewer(t *testing.T) {
 	tempConfigFile := test.GetTestAwsConfigPath(t)
 
 	// Create initial config
-	err := os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-east-1"), 0644)
+	err := os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-east-1"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}
@@ -353,7 +353,7 @@ func TestNeedsReload_ConfigNewer(t *testing.T) {
 
 	// Wait a moment and update config file
 	time.Sleep(10 * time.Millisecond)
-	err = os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-west-2"), 0644)
+	err = os.WriteFile(tempConfigFile, []byte("[default]\nregion = us-west-2"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to update config: %v", err)
 	}
@@ -406,7 +406,7 @@ sso_account_id = 123456789012
 sso_role_name = AdminRole
 region = us-east-1
 `
-	err := os.WriteFile(configFile, []byte(testConfig), 0644)
+	err := os.WriteFile(configFile, []byte(testConfig), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}
@@ -462,7 +462,7 @@ func TestCacheWithCorruptedFile(t *testing.T) {
 
 	// Create corrupted cache file
 	cachePath := filepath.Join(cacheDir, CacheFileName)
-	err := os.WriteFile(cachePath, []byte("invalid json content"), 0644)
+	err := os.WriteFile(cachePath, []byte("invalid json content"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create corrupted cache: %v", err)
 	}
@@ -481,7 +481,7 @@ func TestCacheDirectoryCreation(t *testing.T) {
 	configFile := test.GetTestAwsConfigPath(t)
 
 	// Create config file
-	err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0644)
+	err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config: %v", err)
 	}

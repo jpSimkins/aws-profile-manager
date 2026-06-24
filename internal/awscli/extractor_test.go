@@ -82,7 +82,7 @@ sso_session = my-sso
 sso_start_url = https://example.awsapps.com/start
 `
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -192,7 +192,7 @@ sso_start_url = https://dev.awsapps.com/start
 sso_region = us-west-2
 `
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -263,7 +263,7 @@ func TestExtractFromFile_EmptyFile(t *testing.T) {
 	configFile := test.GetTestAwsConfigPath(t)
 
 	// Create empty config file
-	err := os.WriteFile(configFile, []byte(""), 0644)
+	err := os.WriteFile(configFile, []byte(""), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -311,7 +311,7 @@ sso_start_url = https://example.awsapps.com/start
 sso_region = us-east-1
 `
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -353,7 +353,7 @@ property = value
 sso_start_url = https://example.awsapps.com/start
 `
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}
@@ -406,12 +406,12 @@ region = us-east-1
 region = us-west-2
 `
 
-	err := os.WriteFile(configFile, []byte(config1), 0644)
+	err := os.WriteFile(configFile, []byte(config1), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config file: %v", err)
 	}
 
-	err = os.WriteFile(differentFile, []byte(config2), 0644)
+	err = os.WriteFile(differentFile, []byte(config2), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create different config file: %v", err)
 	}
@@ -452,7 +452,7 @@ func TestValidateConfigFile(t *testing.T) {
 			name: "Valid file",
 			setup: func() string {
 				configFile := filepath.Join(testAwsDir, "valid-config")
-				_ = os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0644)
+				_ = os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0600)
 				return configFile
 			},
 			expectError: false,
@@ -468,7 +468,7 @@ func TestValidateConfigFile(t *testing.T) {
 			name: "Directory instead of file",
 			setup: func() string {
 				dirPath := filepath.Join(testAwsDir, "directory")
-				_ = os.Mkdir(dirPath, 0755)
+				_ = os.Mkdir(dirPath, 0700)
 				return dirPath
 			},
 			expectError: true,
@@ -507,7 +507,7 @@ func TestGetFileModTime(t *testing.T) {
 	configFile := test.GetTestAwsConfigPath(t)
 
 	// Create config file
-	err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0644)
+	err := os.WriteFile(configFile, []byte("[default]\nregion = us-east-1"), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create config file: %v", err)
 	}
@@ -588,7 +588,7 @@ sso_region = us-west-2
 sso_registration_scopes = sso:account:access
 `
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}

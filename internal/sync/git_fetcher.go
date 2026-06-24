@@ -157,7 +157,7 @@ func (g *GitFetcher) Fetch(ctx context.Context, reporter task.Reporter) ([]byte,
 // gitClone clones the repository.
 func (g *GitFetcher) gitClone(ctx context.Context, repoPath string, reporter task.Reporter) error {
 	// Create parent directory
-	if err := os.MkdirAll(filepath.Dir(repoPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(repoPath), 0700); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
