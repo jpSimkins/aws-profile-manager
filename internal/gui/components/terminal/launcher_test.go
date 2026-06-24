@@ -96,7 +96,7 @@ func TestLinuxTerminalCandidates_NoDuplicates(t *testing.T) {
 // --- terminalArgs ---
 
 func TestTerminalArgs_GnomeTerminal_StartsWithDoubleDash(t *testing.T) {
-	args := terminalArgs("/usr/bin/gnome-terminal", "export AWS_PROFILE=prod; exec bash --login")
+	args := terminalArgs("/usr/bin/gnome-terminal", "export AWS_PROFILE=prod; exec bash --login", "bash")
 	if len(args) == 0 {
 		t.Fatal("expected non-empty args for gnome-terminal")
 	}
