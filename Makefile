@@ -33,6 +33,11 @@ HOST_OS   := $(shell go env GOOS)
 HOST_ARCH := $(shell go env GOARCH)
 SUFFIX    := $(HOST_OS)-$(HOST_ARCH)
 
+FYNE_SOURCE_ARG :=
+ifeq ($(HOST_OS),windows)
+FYNE_SOURCE_ARG := --source-dir $(MAIN_PATH)
+endif
+
 # Proper extension for current host (used by build)
 EXE_EXT :=
 ifeq ($(HOST_OS),windows)
@@ -331,6 +336,7 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		mv "$$tmp_file" FyneApp.toml
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
+		$(FYNE_SOURCE_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)
 	@if [ "$(HOST_OS)" = "linux" ]; then \
 		mv "$(APP_NAME).tar.xz" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).tar.xz"; \
