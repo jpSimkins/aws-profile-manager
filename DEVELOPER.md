@@ -19,6 +19,11 @@ cd aws-profile-manager
 npm run setup
 ```
 
+**Fedora will need:**
+```bash
+sudo dnf install -y libXxf86vm-devel
+```
+
 ### Environment Configuration
 The project uses a `.env` file for environment variables. You may need to customize it for your system:
 
