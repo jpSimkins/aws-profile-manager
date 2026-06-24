@@ -110,7 +110,7 @@ version: ## Show version information
 # -----------------------------------------------------------------------------
 # Build for current platform
 # -----------------------------------------------------------------------------
-build: deps embed-all ## Build for current platform
+build: deps ## Build for current platform
 	@echo "Building $(BINARY_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=1 go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT) $(MAIN_PATH)
@@ -156,8 +156,9 @@ build-windows-amd64: ## Build windows/amd64
 # -----------------------------------------------------------------------------
 # Host-aware build-all: builds only for the current host OS/arch
 # NOTE: Cross-compilation with CGO_ENABLED=1 requires platform-specific toolchains
+# NOTE: Run 'make embed-all' first to generate embedded resources
 # -----------------------------------------------------------------------------
-build-all: deps embed-all ## Build for this host only (cross-platform builds require host-specific tooling)
+build-all: deps ## Build for this host only (cross-platform builds require host-specific tooling)
 	@mkdir -p $(BUILD_DIR)
 	@echo "Host detected: $(HOST_OS)/$(HOST_ARCH)"
 	@if [ "$(HOST_OS)" = "linux" ]; then \
