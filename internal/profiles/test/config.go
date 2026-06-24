@@ -146,7 +146,7 @@ func NewConfigLarge() string {
 func WriteConfig(t *testing.T, content string) {
 	t.Helper()
 	configPath := test.GetTestAwsConfigPath(t)
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 }

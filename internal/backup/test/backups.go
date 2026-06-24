@@ -224,7 +224,7 @@ func WriteInvalidBackup(t *testing.T) string {
 	t.Helper()
 
 	backupPath := filepath.Join(test.GetTestConfigDir(t), "invalid-backup.json")
-	if err := os.WriteFile(backupPath, []byte("invalid json {["), 0644); err != nil {
+	if err := os.WriteFile(backupPath, []byte("invalid json {["), 0600); err != nil {
 		t.Fatalf("Failed to write invalid backup: %v", err)
 	}
 

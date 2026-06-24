@@ -114,7 +114,7 @@ func (c *Cache) Set(entry *CacheEntry) error {
 
 	// Create cache directory if needed
 	cacheDir := filepath.Dir(cacheFile)
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 

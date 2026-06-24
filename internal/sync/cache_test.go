@@ -209,7 +209,7 @@ func TestCache_CorruptedCache(t *testing.T) {
 		t.Fatalf("getCacheFilePath() failed: %v", err)
 	}
 
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		t.Fatalf("Failed to create cache dir: %v", err)
 	}
 

@@ -81,7 +81,7 @@ func TestConfigReader_ReadConfig_WithErrors(t *testing.T) {
 
 	t.Run("empty file returns empty schema", func(t *testing.T) {
 		configPath := test.GetTestAwsConfigPath(t)
-		_ = os.WriteFile(configPath, []byte(""), 0644)
+		_ = os.WriteFile(configPath, []byte(""), 0600)
 
 		config := Config{
 			ConfigPath:  configPath,

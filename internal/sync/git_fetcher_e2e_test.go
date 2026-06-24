@@ -46,7 +46,7 @@ func TestGitFetcher_RealGitHTTPS(t *testing.T) {
 	t.Logf("Fetching file: %s", filePath)
 
 	workDir := filepath.Join(test.GetTestConfigDir(t), "git-e2e")
-	if err := os.MkdirAll(workDir, 0755); err != nil {
+	if err := os.MkdirAll(workDir, 0700); err != nil {
 		t.Fatalf("Failed to create work directory: %v", err)
 	}
 
@@ -115,7 +115,7 @@ func TestGitFetcher_RealGitSSH(t *testing.T) {
 	t.Logf("Fetching file: %s", filePath)
 
 	workDir := filepath.Join(test.GetTestConfigDir(t), "git-e2e-ssh")
-	if err := os.MkdirAll(workDir, 0755); err != nil {
+	if err := os.MkdirAll(workDir, 0700); err != nil {
 		t.Fatalf("Failed to create work directory: %v", err)
 	}
 
@@ -169,7 +169,7 @@ func TestGitFetcher_RealGitTag(t *testing.T) {
 	t.Logf("Fetching file: %s", filePath)
 
 	workDir := filepath.Join(test.GetTestConfigDir(t), "git-e2e-tag")
-	if err := os.MkdirAll(workDir, 0755); err != nil {
+	if err := os.MkdirAll(workDir, 0700); err != nil {
 		t.Fatalf("Failed to create work directory: %v", err)
 	}
 

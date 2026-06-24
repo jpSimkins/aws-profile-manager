@@ -205,7 +205,7 @@ region = us-west-2
 region = eu-west-1
 output = yaml
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 
@@ -261,7 +261,7 @@ region = us-east-1
 [profile personal-2]
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 
@@ -300,7 +300,7 @@ func TestConfigReader_ReadConfig_EmptyConfig(t *testing.T) {
 	}
 
 	// Create empty config
-	if err := os.WriteFile(configPath, []byte(""), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(""), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 
@@ -340,7 +340,7 @@ region = us-east-1
 [profile valid]
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write config: %v", err)
 	}
 

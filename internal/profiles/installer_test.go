@@ -287,7 +287,7 @@ output = json
 region = us-west-2
 `
 
-	if err := os.WriteFile(configPath, []byte(existingConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(existingConfig), 0600); err != nil {
 		t.Fatalf("Failed to create existing config: %v", err)
 	}
 

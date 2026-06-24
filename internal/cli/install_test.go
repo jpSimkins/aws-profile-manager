@@ -168,7 +168,7 @@ func TestRunInstall_WithSchema(t *testing.T) {
 	}
 
 	schemaJSON, _ := json.Marshal(testSchema)
-	if err := os.WriteFile(schemaFile, schemaJSON, 0644); err != nil {
+	if err := os.WriteFile(schemaFile, schemaJSON, 0600); err != nil {
 		t.Fatalf("Failed to write schema file: %v", err)
 	}
 
@@ -215,7 +215,7 @@ func TestRunInstall_DryRun(t *testing.T) {
 	}
 
 	schemaJSON, _ := json.Marshal(testSchema)
-	if err := os.WriteFile(schemaFile, schemaJSON, 0644); err != nil {
+	if err := os.WriteFile(schemaFile, schemaJSON, 0600); err != nil {
 		t.Fatalf("Failed to write schema file: %v", err)
 	}
 
@@ -287,7 +287,7 @@ func TestRunInstall_WithFiltering(t *testing.T) {
 	}
 
 	schemaJSON, _ := json.Marshal(testSchema)
-	if err := os.WriteFile(schemaFile, schemaJSON, 0644); err != nil {
+	if err := os.WriteFile(schemaFile, schemaJSON, 0600); err != nil {
 		t.Fatalf("Failed to write schema file: %v", err)
 	}
 
@@ -336,7 +336,7 @@ func TestRunInstall_VerboseMode(t *testing.T) {
 	}
 
 	schemaJSON, _ := json.Marshal(testSchema)
-	if err := os.WriteFile(schemaFile, schemaJSON, 0644); err != nil {
+	if err := os.WriteFile(schemaFile, schemaJSON, 0600); err != nil {
 		t.Fatalf("Failed to write schema file: %v", err)
 	}
 
@@ -383,7 +383,7 @@ func TestRunInstall_CheatSheetOnly_DefaultPath(t *testing.T) {
 	}
 
 	schemaJSON, _ := json.Marshal(testSchema)
-	if err := os.WriteFile(schemaFile, schemaJSON, 0644); err != nil {
+	if err := os.WriteFile(schemaFile, schemaJSON, 0600); err != nil {
 		t.Fatalf("Failed to write schema file: %v", err)
 	}
 

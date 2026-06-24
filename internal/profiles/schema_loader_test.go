@@ -77,7 +77,7 @@ region = us-west-2
 region = eu-west-1
 output = yaml
 `
-	if err := os.WriteFile(config.ConfigPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(config.ConfigPath, []byte(content), 0600); err != nil {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 

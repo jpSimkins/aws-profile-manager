@@ -14,7 +14,7 @@ func TestRunProfiles_Empty(t *testing.T) {
 	// Create empty AWS config
 	configPath := test.GetTestAwsConfigPath(t)
 	content := `# Empty config`
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -52,7 +52,7 @@ sso_account_id = 987654321098
 sso_role_name = PowerUser
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -90,7 +90,7 @@ sso_account_id = 987654321098
 sso_role_name = PowerUser
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -129,7 +129,7 @@ sso_account_id = 987654321098
 sso_role_name = PowerUser
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -161,7 +161,7 @@ region = us-west-2
 [profile eu-west]
 region = eu-west-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -193,7 +193,7 @@ region = us-west-2
 [profile dev-app1]
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -236,7 +236,7 @@ sso_account_id = 987654321098
 sso_role_name = PowerUser
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -262,7 +262,7 @@ func TestRunProfiles_VerboseMode(t *testing.T) {
 	content := `[profile test]
 region = us-east-1
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -293,7 +293,7 @@ region = us-east-1
 credential_process = /usr/local/bin/get-creds
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 

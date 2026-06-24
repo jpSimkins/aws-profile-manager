@@ -132,7 +132,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 
 	// Create a test git repository
 	repoDir := filepath.Join(test.GetTestConfigDir(t), "test-repo")
-	if err := os.MkdirAll(repoDir, 0755); err != nil {
+	if err := os.MkdirAll(repoDir, 0700); err != nil {
 		t.Fatalf("Failed to create repo directory: %v", err)
 	}
 
@@ -140,6 +140,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 	gitTask := &task.SubprocessTask{
 		Name: "git",
 		Args: []string{"-C", repoDir, "init"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	_, err := task.Run(context.Background(), gitTask, task.NoOpReporter{})
 	if err != nil {
@@ -150,6 +151,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 	branchTask := &task.SubprocessTask{
 		Name: "git",
 		Args: []string{"-C", repoDir, "symbolic-ref", "--short", "HEAD"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	branchResult, err := task.Run(context.Background(), branchTask, task.NoOpReporter{})
 	if err != nil {
@@ -163,7 +165,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 	// Create test config file
 	configContent := []byte(`{"version":"1.0","managed":{"organizations":{}}}`)
 	configPath := filepath.Join(repoDir, "config.json")
-	if err := os.WriteFile(configPath, configContent, 0644); err != nil {
+	if err := os.WriteFile(configPath, configContent, 0600); err != nil {
 		t.Fatalf("Failed to write config file: %v", err)
 	}
 
@@ -171,15 +173,17 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 	addTask := &task.SubprocessTask{
 		Name: "git",
 		Args: []string{"-C", repoDir, "add", "config.json"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	if _, err := task.Run(context.Background(), addTask, task.NoOpReporter{}); err != nil {
 		t.Fatalf("Failed to add config file: %v", err)
 	}
 
-	// Configure git user for commit
+	// Configure git user for commit (local to test repo only)
 	userTask := &task.SubprocessTask{
 		Name: "git",
-		Args: []string{"-C", repoDir, "config", "user.email", "test@example.com"},
+		Args: []string{"-C", repoDir, "config", "--local", "user.email", "test@example.com"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	if _, err := task.Run(context.Background(), userTask, task.NoOpReporter{}); err != nil {
 		t.Fatalf("Failed to configure git user.email: %v", err)
@@ -187,7 +191,8 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 
 	nameTask := &task.SubprocessTask{
 		Name: "git",
-		Args: []string{"-C", repoDir, "config", "user.name", "Test User"},
+		Args: []string{"-C", repoDir, "config", "--local", "user.name", "Test User"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	if _, err := task.Run(context.Background(), nameTask, task.NoOpReporter{}); err != nil {
 		t.Fatalf("Failed to configure git user.name: %v", err)
@@ -196,6 +201,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 	commitTask := &task.SubprocessTask{
 		Name: "git",
 		Args: []string{"-C", repoDir, "commit", "-m", "Initial commit"},
+		Env:  map[string]string{"GIT_CONFIG_GLOBAL": "/dev/null"},
 	}
 	if _, err := task.Run(context.Background(), commitTask, task.NoOpReporter{}); err != nil {
 		t.Fatalf("Failed to create initial commit: %v", err)
@@ -203,7 +209,7 @@ func TestGitFetcher_LocalRepo(t *testing.T) {
 
 	// Create work directory for fetcher
 	workDir := filepath.Join(test.GetTestConfigDir(t), "git-work")
-	if err := os.MkdirAll(workDir, 0755); err != nil {
+	if err := os.MkdirAll(workDir, 0700); err != nil {
 		t.Fatalf("Failed to create work directory: %v", err)
 	}
 
@@ -239,7 +245,7 @@ func TestGitFetcher_ContextCancellation(t *testing.T) {
 	test.SetupTestEnvironment(t)
 
 	workDir := filepath.Join(test.GetTestConfigDir(t), "git-work")
-	if err := os.MkdirAll(workDir, 0755); err != nil {
+	if err := os.MkdirAll(workDir, 0700); err != nil {
 		t.Fatalf("Failed to create work directory: %v", err)
 	}
 

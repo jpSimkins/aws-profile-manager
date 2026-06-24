@@ -81,7 +81,7 @@ func GetCacheDir() (string, error) {
 	cacheDir := filepath.Join(configDir, "cache")
 
 	// Ensure cache directory exists
-	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+	if err := os.MkdirAll(cacheDir, 0700); err != nil {
 		return "", logging.Log.ErrorfWithDetails("failed to create cache directory", err,
 			"dir", cacheDir)
 	}

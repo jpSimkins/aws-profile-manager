@@ -120,7 +120,7 @@ region = us-west-2
 [profile personal-below]
 region = us-west-1
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -186,7 +186,7 @@ region = us-east-1
 [profile personal-2]
 region = us-west-2
 `
-	if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -228,7 +228,7 @@ func TestExporter_Export_EmptyConfig(t *testing.T) {
 	}
 
 	// Create empty config
-	if err := os.WriteFile(configPath, []byte(""), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(""), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -294,7 +294,7 @@ func TestExporter_Export_InvalidOutputPath(t *testing.T) {
 	}
 
 	// Create valid config
-	if err := os.WriteFile(configPath, []byte("[profile test]\n"), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte("[profile test]\n"), 0600); err != nil {
 		t.Fatalf("Failed to write test config: %v", err)
 	}
 
@@ -411,7 +411,7 @@ region = us-west-2
 [profile personal-below]
 region = us-west-1
 `
-			if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			if err := os.WriteFile(configPath, []byte(configContent), 0600); err != nil {
 				t.Fatalf("Failed to write test config: %v", err)
 			}
 

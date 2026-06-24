@@ -22,7 +22,7 @@ import (
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
-//	os.WriteFile("config.json", jsonData, 0644)
+//	os.WriteFile("config.json", jsonData, 0600)
 func (s *Schema) ToJSON() ([]byte, error) {
 	logging.Debug.Log("Serializing Schema to JSON")
 

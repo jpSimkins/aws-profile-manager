@@ -187,7 +187,7 @@ func TestImporter_Import_DryRunWithVariousSchemas(t *testing.T) {
 			// Create backup
 			backupPath := filepath.Join(test.GetTestConfigDir(t), tt.name+"-backup.json")
 			data, _ := json.Marshal(tt.schema)
-			_ = os.WriteFile(backupPath, data, 0644)
+			_ = os.WriteFile(backupPath, data, 0600)
 
 			// Dry run
 			result, err := importer.Import(context.Background(), ImportOptions{

@@ -89,7 +89,7 @@ func SetupTestEnvironment(t *testing.T) {
 
 	// Create all directories including cache
 	for _, dir := range []string{testConfigDir, testCacheDir, testAwsDir, testDesktopDir} {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0700); err != nil {
 			t.Fatalf("Failed to create directory %s: %v", dir, err)
 		}
 	}

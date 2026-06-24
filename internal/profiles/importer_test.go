@@ -42,7 +42,7 @@ func TestImporter_Import_ManagedOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to marshal schema: %v", err)
 	}
-	if err := os.WriteFile(backupPath, backupData, 0644); err != nil {
+	if err := os.WriteFile(backupPath, backupData, 0600); err != nil {
 		t.Fatalf("Failed to write backup file: %v", err)
 	}
 
@@ -98,7 +98,7 @@ func TestImporter_Import_FullRestore(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to marshal schema: %v", err)
 	}
-	if err := os.WriteFile(backupPath, backupData, 0644); err != nil {
+	if err := os.WriteFile(backupPath, backupData, 0600); err != nil {
 		t.Fatalf("Failed to write backup file: %v", err)
 	}
 
@@ -141,7 +141,7 @@ func TestImporter_Import_DryRun(t *testing.T) {
 		// Create backup file
 		testSchema := schematest.NewManagedSsoSingle()
 		backupData, _ := json.Marshal(testSchema)
-		_ = os.WriteFile(backupPath, backupData, 0644)
+		_ = os.WriteFile(backupPath, backupData, 0600)
 
 		// Dry run import
 		importer := NewImporter(config)
@@ -176,12 +176,12 @@ func TestImporter_Import_DryRun(t *testing.T) {
 
 		// Create initial config with some content
 		initialContent := "# Existing config\n[profile existing]\nregion = us-east-1\n"
-		_ = os.WriteFile(configPath, []byte(initialContent), 0644)
+		_ = os.WriteFile(configPath, []byte(initialContent), 0600)
 
 		// Create backup file with different profiles
 		testSchema := schematest.NewManagedSsoSingle()
 		backupData, _ := json.Marshal(testSchema)
-		_ = os.WriteFile(backupPath, backupData, 0644)
+		_ = os.WriteFile(backupPath, backupData, 0600)
 
 		// Dry run import
 		importer := NewImporter(config)
@@ -217,7 +217,7 @@ func TestImporter_Import_InvalidBackup(t *testing.T) {
 	backupPath := filepath.Join(test.GetTestConfigDir(t), "invalid.json")
 
 	// Create invalid JSON file
-	if err := os.WriteFile(backupPath, []byte("not valid json"), 0644); err != nil {
+	if err := os.WriteFile(backupPath, []byte("not valid json"), 0600); err != nil {
 		t.Fatalf("Failed to write backup file: %v", err)
 	}
 
@@ -267,7 +267,7 @@ func TestImporter_Import_NoSectionsSelected(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to marshal schema: %v", err)
 	}
-	if err := os.WriteFile(backupPath, backupData, 0644); err != nil {
+	if err := os.WriteFile(backupPath, backupData, 0600); err != nil {
 		t.Fatalf("Failed to write backup file: %v", err)
 	}
 
@@ -296,7 +296,7 @@ func TestImporter_Import_UnmanagedOnly(t *testing.T) {
 	backupPath := filepath.Join(test.GetTestConfigDir(t), "personal-backup.json")
 
 	// Create empty config file first
-	if err := os.WriteFile(configPath, []byte(""), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(""), 0600); err != nil {
 		t.Fatalf("Failed to create config file: %v", err)
 	}
 
@@ -306,7 +306,7 @@ func TestImporter_Import_UnmanagedOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to marshal schema: %v", err)
 	}
-	if err := os.WriteFile(backupPath, backupData, 0644); err != nil {
+	if err := os.WriteFile(backupPath, backupData, 0600); err != nil {
 		t.Fatalf("Failed to write backup file: %v", err)
 	}
 
@@ -362,7 +362,7 @@ func TestImporter_Import_MultipleSchemas(t *testing.T) {
 			backupPath := filepath.Join(test.GetTestConfigDir(t), "backup.json")
 
 			// Create empty config file if needed (for unmanaged imports)
-			if err := os.WriteFile(configPath, []byte(""), 0644); err != nil {
+			if err := os.WriteFile(configPath, []byte(""), 0600); err != nil {
 				t.Fatalf("Failed to create config file: %v", err)
 			}
 
@@ -372,7 +372,7 @@ func TestImporter_Import_MultipleSchemas(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to marshal schema: %v", err)
 			}
-			if err := os.WriteFile(backupPath, backupData, 0644); err != nil {
+			if err := os.WriteFile(backupPath, backupData, 0600); err != nil {
 				t.Fatalf("Failed to write backup file: %v", err)
 			}
 
@@ -453,7 +453,7 @@ func TestImporter_Import_DuplicateDetection(t *testing.T) {
 [profile my-personal]
 region = us-east-1
 `
-	_ = os.WriteFile(configPath, []byte(existingContent), 0644)
+	_ = os.WriteFile(configPath, []byte(existingContent), 0600)
 
 	// Create backup with same personal profile
 	testSchema := schematest.NewUnmanagedGenericSingle()
@@ -467,7 +467,7 @@ region = us-east-1
 	testSchema.Unmanaged.Below.GenericProfiles[0].ProfileName = "my-personal" // Duplicate!
 
 	backupData, _ := json.Marshal(testSchema)
-	_ = os.WriteFile(backupPath, backupData, 0644)
+	_ = os.WriteFile(backupPath, backupData, 0600)
 
 	// Import - should detect duplicate
 	importer := NewImporter(config)

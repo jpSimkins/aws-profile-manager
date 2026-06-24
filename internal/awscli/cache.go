@@ -377,7 +377,7 @@ func (c *Cache) saveToCache(data *ExtractedData) error {
 
 	// Ensure the config directory exists
 	configDir := filepath.Dir(cachePath)
-	if err := os.MkdirAll(configDir, 0755); err != nil {
+	if err := os.MkdirAll(configDir, 0700); err != nil {
 		return logging.Log.ErrorWithDetails("Failed to create config directory for AWS CLI cache", err)
 	}
 

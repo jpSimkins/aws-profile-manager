@@ -80,7 +80,7 @@ func readFileContent(path string) (string, error) {
 func writeConfigFile(configPath string, lines []string) (err error) {
 	// Ensure directory exists
 	dir := filepath.Dir(configPath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
@@ -123,12 +123,12 @@ func writeConfigFile(configPath string, lines []string) (err error) {
 func writeFileContent(path string, content string) error {
 	// Ensure directory exists
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
 	// Write file
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(path, []byte(content), 0600); err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
 	}
 
@@ -147,7 +147,7 @@ func writeFileContent(path string, content string) error {
 // Returns:
 //   - error: Any error during directory creation
 func ensureDirectory(path string) error {
-	if err := os.MkdirAll(path, 0755); err != nil {
+	if err := os.MkdirAll(path, 0700); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 	return nil

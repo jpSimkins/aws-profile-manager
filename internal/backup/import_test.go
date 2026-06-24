@@ -37,7 +37,7 @@ func TestImportProfiles_FullRestore(t *testing.T) {
 	}
 
 	// Clear config file
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	// Import
 	importOpts := newTestImportOptions(t, exportResult.OutputPath)
@@ -272,7 +272,7 @@ func TestImportProfiles_DryRun(t *testing.T) {
 	}
 
 	// Clear config file
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	// Import in dry run mode
 	importOpts := newTestImportOptions(t, exportResult.OutputPath)
@@ -370,7 +370,7 @@ func TestImportProfiles_InvalidBackup(t *testing.T) {
 	// Create invalid backup file
 	cfg := newTestConfig(t)
 	backupPath := newTestExportOptions(t).OutputPath
-	_ = os.WriteFile(backupPath, []byte("invalid json"), 0644)
+	_ = os.WriteFile(backupPath, []byte("invalid json"), 0600)
 
 	importOpts := newTestImportOptions(t, backupPath)
 	importOpts.IncludeManaged = true
@@ -398,7 +398,7 @@ func TestImportProfiles_EmptySchema(t *testing.T) {
 	exportOpts.ExcludeSettings = false // Only settings
 
 	// Create empty config
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	// This should fail during export because no content selected
 	// Let's create a settings-only backup manually
@@ -477,7 +477,7 @@ func TestImportProfiles_MultipleProfileTypes(t *testing.T) {
 	}
 
 	// Clear config
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	// Import
 	importOpts := newTestImportOptions(t, exportResult.OutputPath)
@@ -555,7 +555,7 @@ func TestImportProfiles_SkipCheatSheetWhenManagedDisabled(t *testing.T) {
 	}
 
 	cfg := newTestConfig(t)
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	importOpts := newTestImportOptions(t, backupPath)
 	importOpts.IncludeManaged = false
@@ -613,7 +613,7 @@ func TestImportProfiles_LargeSchema(t *testing.T) {
 	}
 
 	// Clear config
-	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0644)
+	_ = os.WriteFile(cfg.ConfigPath, []byte(""), 0600)
 
 	// Import
 	importOpts := newTestImportOptions(t, exportResult.OutputPath)

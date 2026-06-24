@@ -250,13 +250,13 @@ func Save(path string) error {
 
 	// Ensure directory exists
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		return logging.Log.ErrorfWithDetails("failed to create settings directory", err,
 			"dir", dir)
 	}
 
 	// Write file
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0600); err != nil {
 		return logging.Log.ErrorfWithDetails("failed to write settings file", err,
 			"path", path)
 	}

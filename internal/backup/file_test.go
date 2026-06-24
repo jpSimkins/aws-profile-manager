@@ -73,7 +73,7 @@ func TestReadBackupFile_InvalidJSON(t *testing.T) {
 
 	// Write invalid JSON
 	backupPath := filepath.Join(test.GetTestConfigDir(t), "invalid.json")
-	_ = os.WriteFile(backupPath, []byte("not valid json"), 0644)
+	_ = os.WriteFile(backupPath, []byte("not valid json"), 0600)
 
 	_, err := ReadBackupFile(backupPath)
 	if err == nil {
@@ -93,7 +93,7 @@ func TestReadBackupFile_InvalidStructure(t *testing.T) {
 			"tool_version": "1.0.0"
 		}
 	}`)
-	_ = os.WriteFile(backupPath, data, 0644)
+	_ = os.WriteFile(backupPath, data, 0600)
 
 	_, err := ReadBackupFile(backupPath)
 	if err == nil {
