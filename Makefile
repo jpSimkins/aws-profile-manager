@@ -74,7 +74,7 @@ deps-system: ## Install system dependencies (host arch)
 		sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev libxkbcommon-dev pkg-config; \
 	elif command -v yum >/dev/null 2>&1; then \
 		echo "Detected RHEL/CentOS system"; \
-		sudo yum install -y gcc mesa-libGL-devel libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel pkgconf-pkg-config; \
+		sudo yum install -y gcc mesa-libGL-devel libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel libXxf86vm-devel pkgconf-pkg-config; \
 	elif command -v brew >/dev/null 2>&1; then \
 		echo "Detected macOS system (use Xcode CLT / brew as needed)"; \
 	else \
