@@ -35,7 +35,7 @@ HOST_ARCH := $(shell go env GOARCH)
 SUFFIX    := $(HOST_OS)-$(HOST_ARCH)
 
 FYNE_SOURCE_ARG := --source-dir $(MAIN_PATH)
-FYNE_ICON_ARG := --icon Icon.png
+FYNE_ICON_ARG := --icon $(abspath Icon.png)
 FYNE_APP_ID_ARG := --app-id $(APP_ID)
 
 # Proper extension for current host (used by build)
