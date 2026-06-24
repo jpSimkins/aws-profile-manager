@@ -27,7 +27,7 @@ jobs:
     if: github.event.repository.visibility == 'public'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
 
       - name: Set up Go
         uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.0.2
@@ -37,16 +37,16 @@ jobs:
           cache-dependency-path: ./go.sum
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@9e0d7b8d25671d64c341c19c0152d693099fb5ba  # v4.35.5
+        uses: github/codeql-action/init@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
         with:
           languages: go
           queries: security-extended,security-and-quality
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@9e0d7b8d25671d64c341c19c0152d693099fb5ba  # v4.35.5
+        uses: github/codeql-action/autobuild@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@9e0d7b8d25671d64c341c19c0152d693099fb5ba  # v4.35.5
+        uses: github/codeql-action/analyze@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
         with:
           category: "/language:go"
 
@@ -57,7 +57,7 @@ jobs:
     if: github.event.repository.visibility == 'public'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
 
       - name: Set up Go
         uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.0.2
@@ -73,7 +73,7 @@ jobs:
         run: gosec -no-fail -fmt sarif -out gosec-results.sarif ./...
 
       - name: Upload Gosec Results to GitHub Security
-        uses: github/codeql-action/upload-sarif@9e0d7b8d25671d64c341c19c0152d693099fb5ba  # v4.35.5
+        uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
         with:
           sarif_file: gosec-results.sarif
           category: gosec
@@ -85,7 +85,7 @@ jobs:
     if: github.event.repository.visibility == 'public'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
@@ -97,7 +97,7 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
 
       - name: Upload Trivy Results to GitHub Security
-        uses: github/codeql-action/upload-sarif@9e0d7b8d25671d64c341c19c0152d693099fb5ba  # v4.35.5
+        uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
         with:
           sarif_file: trivy-results.sarif
           category: trivy
@@ -109,7 +109,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.repository.visibility == 'public'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
 
       - name: Dependency Review
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294  # v5.0.0

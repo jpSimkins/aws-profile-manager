@@ -5,6 +5,7 @@ package bundled
 
 import (
 	_ "embed"
+
 	"fyne.io/fyne/v2"
 )
 
