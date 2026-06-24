@@ -264,10 +264,10 @@ icon: ## Generate Icon.png from Icon.svg
 		rsvg-convert -w 512 -h 512 --background-color=transparent Icon.svg -o Icon.png; \
 		echo "✓ Icon.png generated successfully using rsvg-convert"; \
 	elif command -v magick >/dev/null 2>&1; then \
-		magick Icon.svg -background none -resize 512x512 Icon.png; \
+		magick Icon.svg -background none -transparent white  -resize 512x512 Icon.png; \
 		echo "✓ Icon.png generated successfully using ImageMagick (magick)"; \
 	elif command -v convert >/dev/null 2>&1; then \
-		convert -background none -resize 512x512 Icon.svg Icon.png; \
+		convert -background none -transparent white  -resize 512x512 Icon.svg Icon.png; \
 		echo "✓ Icon.png generated successfully using ImageMagick (convert)"; \
 	elif command -v inkscape >/dev/null 2>&1; then \
 		inkscape Icon.svg --export-filename=Icon.png --export-width=512 --export-height=512 --export-background-opacity=0; \

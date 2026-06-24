@@ -41,6 +41,7 @@ $IM "$ICON_PNG" \
   -background none \
   -gravity center \
   -extent ${PNG_WIDTH}x${PNG_HEIGHT} \
+  -transparent white \
   "$LOGO_DIR/logo.png"
 
 echo "✓ Generated $LOGO_DIR/logo.png (${PNG_WIDTH}x${PNG_HEIGHT} @ 2x, display: ${LOGO_WIDTH}x${LOGO_HEIGHT})"
@@ -52,6 +53,7 @@ $IM "$ICON_PNG" \
   -background none \
   -gravity center \
   -extent ${PNG_WIDTH}x${PNG_HEIGHT} \
+  -transparent white \
   -modulate 120,110,100 \
   "$LOGO_DIR/logo-dark-mode.png"
 
