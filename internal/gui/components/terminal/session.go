@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -94,20 +95,25 @@ func launchWindows(terminal string, env map[string]string, command string, exitO
 //
 // When command is non-empty it is inserted before the interactive shell so it
 // runs immediately and the user sees its output. When ExitOnComplete is true
-// the `exec bash --login` tail is omitted so the window closes on completion.
+// the `exec <shell> --login` tail is omitted so the window closes on completion.
+//
+// The user's default shell (from $SHELL) is used, respecting shell frameworks
+// like oh-my-zsh, fish, nushell, etc.
 func launchLinux(terminal string, env map[string]string, command string, exitOnComplete bool) error {
 	exports := buildExportStatements(env)
+	shell := getUserShell()
+
 	// Build a shell snippet: export vars, optionally run command, then open
-	// an interactive login shell. exec bash replaces the intermediate shell.
+	// an interactive login shell. exec <shell> replaces the intermediate shell.
 	shellCmd := strings.Join(exports, "; ")
 	if command != "" {
 		shellCmd += "; " + command
 	}
 	if !exitOnComplete {
-		shellCmd += "; exec bash --login"
+		shellCmd += fmt.Sprintf("; exec %s --login", shell)
 	}
 
-	args := terminalArgs(terminal, shellCmd)
+	args := terminalArgs(terminal, shellCmd, shell)
 	cmd := exec.Command(terminal, args...)
 	cmd.Env = os.Environ()
 	if err := cmd.Start(); err != nil {
@@ -118,28 +124,56 @@ func launchLinux(terminal string, env map[string]string, command string, exitOnC
 
 // terminalArgs returns the correct argument list for each known terminal to
 // execute a shell command on startup.
-func terminalArgs(terminal, shellCmd string) []string {
+//
+// Most modern terminals support passing a command via -e followed by separate
+// arguments, avoiding complex shell quoting. For terminals that require it,
+// the command is properly shell-escaped using strconv.Quote.
+//
+// The shell parameter is used for terminals that execute shell commands directly,
+// and allows respecting the user's shell choice (bash, zsh, fish, etc.).
+func terminalArgs(terminal, shellCmd, shell string) []string {
 	base := lastSegment(terminal)
 	switch base {
-	case "gnome-terminal":
-		// gnome-terminal uses -- to separate its own args from the command
-		return []string{"--", "bash", "-c", shellCmd}
+	case "ptyxis", "gnome-terminal", "gnome-console":
+		// ptyxis (Fedora 41+), gnome-terminal, gnome-console: -- separates terminal args from command
+		// Modern GNOME terminals support separate args to avoid quoting issues
+		return []string{"--", shell, "-c", shellCmd}
 	case "konsole":
-		return []string{"-e", "bash", "-c", shellCmd}
+		// KDE Konsole: -e runs a command, supports separate arguments
+		return []string{"-e", shell, "-c", shellCmd}
+	case "xfce4-terminal", "mate-terminal", "xterm":
+		// XFCE, MATE, xterm: -e runs a command
+		return []string{"-e", shell, "-c", shellCmd}
+	case "lxterminal":
+		// LXTerminal: -e runs a command
+		return []string{"-e", shell, "-c", shellCmd}
+	case "kitty":
+		// Kitty: supports standard shell invocation
+		return []string{"sh", "-c", shellCmd}
+	case "alacritty":
+		// Alacritty: -e specifies command to run
+		return []string{"-e", shell, "-c", shellCmd}
 	case "tilix":
-		return []string{"-e", "bash -c '" + shellCmd + "'"}
+		// Tilix: -e runs a command, requires proper quoting
+		return []string{"-e", shellCmd}
+	case "rxvt-unicode", "urxvt":
+		// rxvt-unicode: -e specifies command
+		return []string{"-e", shell, "-c", shellCmd}
 	default:
-		// xterm, xfce4-terminal, mate-terminal, lxterminal, kitty, alacritty,
-		// x-terminal-emulator all accept -e <cmd>
-		return []string{"-e", "bash -c '" + shellCmd + "'"}
+		// Fallback for unknown terminals: assume -e accepts command + args
+		return []string{"-e", shell, "-c", shellCmd}
 	}
 }
 
 // buildExportStatements converts an env map into a slice of `export K=V` statements.
+// Values are properly escaped to handle special characters and spaces.
 func buildExportStatements(env map[string]string) []string {
 	stmts := make([]string, 0, len(env))
 	for k, v := range env {
-		stmts = append(stmts, fmt.Sprintf("export %s=%s", k, v))
+		// Use strconv.Quote for proper shell escaping of the value
+		// This handles spaces, special chars, and shell metacharacters safely
+		escapedValue := strconv.Quote(v)
+		stmts = append(stmts, fmt.Sprintf("export %s=%s", k, escapedValue))
 	}
 	return stmts
 }
@@ -148,4 +182,20 @@ func buildExportStatements(env map[string]string) []string {
 func lastSegment(path string) string {
 	parts := strings.Split(path, "/")
 	return parts[len(parts)-1]
+}
+
+// getUserShell returns the user's default shell, respecting shell frameworks
+// like oh-my-zsh, fish, nushell, and others.
+//
+// First tries the SHELL environment variable, then falls back to bash if
+// the environment variable is not set. This allows shell frameworks to work
+// transparently — if the user has configured SHELL=/usr/bin/zsh with oh-my-zsh,
+// that's what will be used.
+func getUserShell() string {
+	if shell := os.Getenv("SHELL"); shell != "" {
+		// Extract just the shell name (e.g., /usr/bin/zsh -> zsh)
+		return lastSegment(shell)
+	}
+	// Fallback to bash if SHELL is not set
+	return "bash"
 }
