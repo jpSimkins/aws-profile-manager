@@ -27,9 +27,6 @@ LDFLAGS := -s -w -X aws-profile-manager/internal/core.Version=$(VERSION) -X aws-
 GOPATH_BIN := $(shell go env GOPATH)/bin
 GOLANGCI_LINT_VERSION ?= latest
 
-# Portable in-place sed (GNU on Linux uses "-i", BSD/macOS uses "-i ''")
-SEDI := $(shell if sed --version >/dev/null 2>&1; then echo -i; else echo -i ''; fi)
-
 # Host OS/arch helpers and naming
 HOST_OS   := $(shell go env GOOS)
 HOST_ARCH := $(shell go env GOARCH)
@@ -328,7 +325,9 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	@echo "Stamping FyneApp.toml with version $(VERSION)..."
-	@sed $(SEDI) 's/^Version = .*/Version = "$(VERSION)"/' FyneApp.toml
+	@tmp_file=$$(mktemp); \
+		sed 's/^Version = .*/Version = "$(VERSION)"/' FyneApp.toml > "$$tmp_file" && \
+		mv "$$tmp_file" FyneApp.toml
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)
