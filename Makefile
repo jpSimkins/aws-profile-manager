@@ -16,6 +16,7 @@ APP_ID := com.son9ne.aws-profile-manager
 _GIT_TAG  := $(shell git describe --tags --exact-match 2>/dev/null | sed 's/^v//')
 _VGO_TAG  := $(shell grep -m1 'AppVersion\s*=' internal/core/version.go | sed 's/.*"\(.*\)".*/\1/' 2>/dev/null)
 VERSION   ?= $(or $(_GIT_TAG),$(_VGO_TAG),0.0.0)
+APP_VERSION := $(patsubst v%,%,$(VERSION))
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "")
 DATE    ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
@@ -324,9 +325,9 @@ setup: deps deps-dev ## Setup development environment
 package-desktop: build fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
-	@echo "Stamping FyneApp.toml with version $(VERSION)..."
+	@echo "Stamping FyneApp.toml with app version $(APP_VERSION) (from $(VERSION))..."
 	@tmp_file=$$(mktemp); \
-		sed 's/^Version = .*/Version = "$(VERSION)"/' FyneApp.toml > "$$tmp_file" && \
+		sed 's/^Version = .*/Version = "$(APP_VERSION)"/' FyneApp.toml > "$$tmp_file" && \
 		mv "$$tmp_file" FyneApp.toml
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
