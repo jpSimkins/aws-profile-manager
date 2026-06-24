@@ -25,9 +25,29 @@ permissions:
 
 jobs:
   create-tag:
+    outputs:
+      version: ${{ steps.release-metadata.outputs.version }}
+      tag: ${{ steps.release-metadata.outputs.tag }}
+      ref: ${{ steps.release-metadata.outputs.ref }}
     environment: production  # Requires manual approval for releases
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve release metadata
+        id: release-metadata
+        shell: bash
+        run: |
+          TOOL="aws-profile-manager"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/${TOOL}-}"
+          fi
+
+          TAG="${TOOL}-${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "ref=refs/tags/${TAG}" >> "$GITHUB_OUTPUT"
+
       - name: Skip tag creation on tag push
         if: ${{ github.event_name == 'push' }}
         run: echo "Tag push detected; skipping tag creation."
@@ -106,7 +126,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ needs.create-tag.outputs.ref }}
 
       - name: Set up Go
         uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.0.2
@@ -119,13 +139,15 @@ jobs:
         run: make deps-all
 
       - name: Run build
-        run: make build-local
+        run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
 
       - name: Run tests
         run: make test
 
   build-and-release:
-    needs: test
+    needs:
+      - create-tag
+      - test
     strategy:
       matrix:
         include:
@@ -139,7 +161,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ needs.create-tag.outputs.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
@@ -153,10 +175,10 @@ jobs:
         run: make deps-all
 
       - name: Build
-        run: make build-local
+        run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
 
       - name: Package desktop applications
-        run: make package-desktop
+        run: make package-desktop VERSION=${{ needs.create-tag.outputs.version }}
 
       - name: List bin contents (Unix)
         if: ${{ matrix.platform != 'windows' }}
@@ -211,12 +233,14 @@ jobs:
           path: ${{ github.workspace }}/bin/**
 
   create-release:
-    needs: build-and-release
+    needs:
+      - create-tag
+      - build-and-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ needs.create-tag.outputs.ref }}
 
       - name: Download all artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
@@ -298,22 +322,13 @@ jobs:
           done
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Get version
-        id: version
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=${GITHUB_REF#refs/tags/aws-profile-manager-}" >> $GITHUB_OUTPUT
-          fi
-
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: aws-profile-manager-${{ steps.version.outputs.VERSION }}
-          name: AWS Profile Manager ${{ steps.version.outputs.VERSION }}
+          tag_name: ${{ needs.create-tag.outputs.tag }}
+          name: AWS Profile Manager ${{ needs.create-tag.outputs.version }}
           body: |
-            ## AWS Profile Manager ${{ steps.version.outputs.VERSION }}
+            ## AWS Profile Manager ${{ needs.create-tag.outputs.version }}
 
             ### 🎯 What is this?
 
