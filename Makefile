@@ -333,7 +333,7 @@ setup: deps deps-dev ## Setup development environment
 #   macOS:   "AWS Profile Manager-darwin-<arch>.zip"
 #   Windows: "AWS Profile Manager-windows-<arch>.exe"
 # -----------------------------------------------------------------------------
-package-desktop: build fyne-tool ## Package desktop application for distribution
+package-desktop: fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	@echo "Stamping FyneApp.toml with app version $(APP_VERSION) (from $(VERSION))..."
