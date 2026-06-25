@@ -201,36 +201,6 @@ jobs:
         if: ${{ matrix.platform != 'windows' }}
         run: make deps-system
 
-      - name: Install GUI system dependencies (Windows amd64)
-        if: ${{ matrix.platform == 'windows' && matrix.arch == 'amd64' }}
-        shell: pwsh
-        run: |
-          choco install mingw -y --no-progress
-
-          $gccBin = "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
-          if (-not (Test-Path $gccBin)) {
-            throw "MinGW gcc path not found: $gccBin"
-          }
-
-          Add-Content -Path $env:GITHUB_PATH -Value $gccBin
-          Add-Content -Path $env:GITHUB_ENV -Value "CC=gcc"
-          Add-Content -Path $env:GITHUB_ENV -Value "CXX=g++"
-
-      - name: Install GUI system dependencies (Windows arm64)
-        if: ${{ matrix.platform == 'windows' && matrix.arch == 'arm64' }}
-        shell: pwsh
-        run: |
-          choco install llvm -y --no-progress
-
-          $llvmBin = "C:\Program Files\LLVM\bin"
-          if (-not (Test-Path $llvmBin)) {
-            throw "LLVM path not found: $llvmBin"
-          }
-
-          Add-Content -Path $env:GITHUB_PATH -Value $llvmBin
-          Add-Content -Path $env:GITHUB_ENV -Value "CC=clang"
-          Add-Content -Path $env:GITHUB_ENV -Value "CXX=clang++"
-
       - name: Build
         run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
 
