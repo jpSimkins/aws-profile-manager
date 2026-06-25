@@ -201,6 +201,17 @@ jobs:
         if: ${{ matrix.platform != 'windows' }}
         run: make deps-system
 
+      - name: Configure CGO toolchain (Windows ARM64)
+        if: ${{ matrix.platform == 'windows' && matrix.arch == 'arm64' }}
+        shell: pwsh
+        run: |
+          if (-not (Get-Command clang -ErrorAction SilentlyContinue)) {
+            throw "clang was not found on this runner; Windows ARM64 CGO build requires an ARM64-capable compiler"
+          }
+
+          Add-Content -Path $env:GITHUB_ENV -Value "CC=clang"
+          Add-Content -Path $env:GITHUB_ENV -Value "CXX=clang++"
+
       - name: Build
         run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
 
