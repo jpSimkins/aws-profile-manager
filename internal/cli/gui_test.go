@@ -13,7 +13,7 @@ func TestRunGUI_InTestEnvironment(t *testing.T) {
 	cmd := createGUICommand()
 
 	// Run GUI command - should detect test environment and not launch actual GUI
-	runGUI(cmd, []string{})
+	_ = runGUI(cmd, []string{})
 
 	// If we get here without hanging, the test passed
 	// The runGUI function detects test environment and returns early
@@ -28,7 +28,7 @@ func TestRunGUI_WithConfigFlag(t *testing.T) {
 	_ = cmd.Root().PersistentFlags().Set("config", "/test/config.json")
 
 	// Run GUI command
-	runGUI(cmd, []string{})
+	_ = runGUI(cmd, []string{})
 
 	// If we get here without hanging, the test passed
 }

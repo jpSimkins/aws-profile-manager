@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev deps-update lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -9,6 +9,7 @@ BUILD_DIR := ./bin
 SRC_DIR := ./internal
 CMD_DIR := ./cmd
 APP_NAME := AWS Profile Manager
+ARTIFACT_NAME := AWS.Profile.Manager
 APP_ID := com.son9ne.aws-profile-manager
 FYNE_METADATA_FILE := $(MAIN_PATH)/FyneApp.toml
 
@@ -101,6 +102,11 @@ deps-dev: ## Install developer tools (linters, debugger)
 # Convenience: Install both Go and system deps
 # -----------------------------------------------------------------------------
 deps-all: deps deps-system deps-dev
+
+deps-update: ## Update dependencies to latest versions
+	@echo "Updating dependencies..."
+	go get -u ./...
+	go mod tidy
 
 # -----------------------------------------------------------------------------
 # Development commands
@@ -336,21 +342,21 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		mv "$$tmp_file" $(FYNE_METADATA_FILE)
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
-		$(FYNE_SOURCE_ARG) \
+		--name "$(APP_NAME)" \
 		$(FYNE_ICON_ARG) \
 		$(FYNE_APP_ID_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)
 	@if [ "$(HOST_OS)" = "linux" ]; then \
-		mv "$(APP_NAME).tar.xz" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).tar.xz"; \
-		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).tar.xz"; \
+		mv "$(APP_NAME).tar.xz" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz"; \
+		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz"; \
 	elif [ "$(HOST_OS)" = "darwin" ]; then \
-		zip -r "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).zip" "$(APP_NAME).app"; \
+		zip -r "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip" "$(APP_NAME).app"; \
 		rm -rf "$(APP_NAME).app"; \
-		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).zip"; \
+		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip"; \
 	elif [ "$(HOST_OS)" = "windows" ]; then \
-		mv "$(APP_NAME) Setup.exe" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe" 2>/dev/null || \
-		mv "$(APP_NAME).exe" "$(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe" 2>/dev/null || true; \
-		echo "Created $(BUILD_DIR)/$(APP_NAME)-$(SUFFIX).exe"; \
+		mv "$(APP_NAME) Setup.exe" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe" 2>/dev/null || \
+		mv "$(APP_NAME).exe" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe" 2>/dev/null || true; \
+		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
 	fi
 
 # -----------------------------------------------------------------------------

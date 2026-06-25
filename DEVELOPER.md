@@ -5,7 +5,7 @@ This guide is for developers who want to contribute to or modify the AWS Profile
 ## Quick Start
 
 ### Prerequisites
-- Go 1.25.10+ (for building and running)
+- Go 1.26+ (for building and running)
 - Node.js/npm (for convenience scripts)
 - System dependencies for GUI (automatically installed via make)
 

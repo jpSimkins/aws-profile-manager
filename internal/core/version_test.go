@@ -1,6 +1,7 @@
 package core
 
 import (
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -295,11 +296,10 @@ func TestConstants(t *testing.T) {
 
 	// Test expected constant values
 	expectedValues := map[string]string{
-		"AppName":    "AWS Profile Manager",
-		"AppVersion": "0.0.1",
-		"AppAuthor":  "jpSimkins",
-		"AppURL":     "https://github.com/jpsimkins/aws-profile-manager",
-		"Framework":  "Fyne",
+		"AppName":   "AWS Profile Manager",
+		"AppAuthor": "jpSimkins",
+		"AppURL":    "https://github.com/jpsimkins/aws-profile-manager",
+		"Framework": "Fyne",
 	}
 
 	actualValues := map[string]string{
@@ -314,6 +314,11 @@ func TestConstants(t *testing.T) {
 		if actual := actualValues[key]; actual != expected {
 			t.Errorf("Expected %s to be '%s', got '%s'", key, expected, actual)
 		}
+	}
+
+	// AppVersion is release-driven and should remain a valid semantic version.
+	if !regexp.MustCompile(`^\d+\.\d+\.\d+$`).MatchString(AppVersion) {
+		t.Errorf("Expected AppVersion to follow semantic version format (x.y.z), got '%s'", AppVersion)
 	}
 }
 

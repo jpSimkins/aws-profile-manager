@@ -15,7 +15,7 @@ import (
 // via ldflags.
 const (
 	AppName    = "AWS Profile Manager"                              // Application display name
-	AppVersion = "0.0.1"                                            // Semantic version (update for releases)
+	AppVersion = "0.3.0"                                            // Semantic version (update for releases)
 	AppAuthor  = "jpSimkins"                                        // Application author
 	AppURL     = "https://github.com/jpsimkins/aws-profile-manager" // Project URL
 	Framework  = "Fyne"                                             // GUI framework name

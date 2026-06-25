@@ -406,7 +406,7 @@ func createGUICommand() *cobra.Command {
 		Long: `Launch the graphical user interface for AWS Profile Manager.
 This provides a user-friendly window-based interface for managing
 AWS profiles and credentials.`,
-		Run: runGUI,
+		RunE: runGUI,
 	}
 
 	return guiCmd
