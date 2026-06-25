@@ -172,9 +172,6 @@ jobs:
           - os: windows-latest
             platform: windows
             arch: amd64
-          - os: windows-11-arm
-            platform: windows
-            arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -200,17 +197,6 @@ jobs:
       - name: Install GUI system dependencies (Linux/macOS)
         if: ${{ matrix.platform != 'windows' }}
         run: make deps-system
-
-      - name: Configure CGO toolchain (Windows ARM64)
-        if: ${{ matrix.platform == 'windows' && matrix.arch == 'arm64' }}
-        shell: pwsh
-        run: |
-          if (-not (Get-Command clang -ErrorAction SilentlyContinue)) {
-            throw "clang was not found on this runner; Windows ARM64 CGO build requires an ARM64-capable compiler"
-          }
-
-          Add-Content -Path $env:GITHUB_ENV -Value "CC=clang"
-          Add-Content -Path $env:GITHUB_ENV -Value "CXX=clang++"
 
       - name: Build
         run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
@@ -381,7 +367,7 @@ jobs:
             If you're not sure which CPU you have:
 
             - **Linux/macOS:** `uname -m` → `x86_64` = amd64, `arm64`/`aarch64` = arm64
-            - **Windows (PowerShell):** `$env:PROCESSOR_ARCHITECTURE` → `AMD64` or `ARM64`
+            - **Windows (PowerShell):** `$env:PROCESSOR_ARCHITECTURE` → `AMD64`
 
             | OS | CPU | **Direct Binary (CLI + GUI)** | **Desktop Package (same app)** |
             |---|---|---|---|
@@ -390,7 +376,6 @@ jobs:
             | **macOS (Intel)** | amd64 | `aws-profile-manager-darwin-amd64` | `AWS.Profile.Manager-darwin-amd64.zip` |
             | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS.Profile.Manager-darwin-arm64.zip` |
             | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS.Profile.Manager-windows-amd64.exe` |
-            | **Windows** | arm64 | `aws-profile-manager-windows-arm64.exe` | `AWS.Profile.Manager-windows-arm64.exe` |
 
             ## 🔐 Verify your download (checksums)
 
