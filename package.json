@@ -20,8 +20,11 @@
     "make:fmt": "make fmt",
     "make:lint": "make lint",
     "make:vet": "make vet",
+    "make:gosec": "make gosec",
     "make:vuln": "make vuln",
     "make:vuln-verbose": "make vuln-verbose",
+    "make:security": "make security",
+    "make:security-verbose": "make security-verbose",
     "make:clean": "make clean",
     "make:help": "make help",
     "setup": "make deps-all"

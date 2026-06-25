@@ -247,9 +247,9 @@ func showFileSelectionDialog(
 		progressDialog.Show()
 
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		_ = cancel // Intentionally not deferred - would cancel before async goroutine completes
 
 		go func() {
+			defer cancel()
 			displaySchema, sourcePath, loadErr := viewModel.LoadSchemaFromFile(ctx, filePath, task.NoOpReporter{})
 
 			fyne.Do(func() {
@@ -309,9 +309,9 @@ func startInstallSchemaLoadUI(
 	progressDialog.Show()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	_ = cancel // Intentionally not deferred - would cancel before async callback fires
 
 	viewModel.StartLoad(ctx, task.NoOpReporter{}, func(displaySchema *schema.Schema, sourcePath string, err error, loadedAt time.Time) {
+		cancel()
 		fyne.Do(func() {
 			progressDialog.Hide()
 
@@ -383,7 +383,6 @@ func executeInstallation(
 	// Create context with timeout - NOTE: do NOT defer cancel() here as StartInstall is async.
 	// The context will be canceled naturally when the timeout expires.
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	_ = cancel // Intentionally not deferred - would cancel before async goroutine completes
 
 	// Call ViewModel using StartInstall (handles goroutine and context)
 	viewModel.StartInstall(
@@ -393,6 +392,7 @@ func executeInstallation(
 		installOpts,
 		task.NoOpReporter{},
 		func(result *profiles.InstallResult, err error) {
+			cancel()
 			fyne.Do(func() {
 				progressDialog.Hide()
 

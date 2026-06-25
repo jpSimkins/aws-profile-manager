@@ -15,6 +15,7 @@ import (
 	"aws-profile-manager/internal/logging"
 	"aws-profile-manager/internal/profiles"
 	"aws-profile-manager/internal/schema"
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/settings"
 	syncpkg "aws-profile-manager/internal/sync"
 	"aws-profile-manager/internal/task"
@@ -104,8 +105,16 @@ func (vm *InstallViewModel) LoadDisplaySchema(ctx context.Context, reporter task
 		Fn: func(runCtx context.Context, runReporter task.Reporter) ([]byte, error) {
 			runReporter.ReportStatus("Reading sync cache")
 
+			cacheDir, cacheDirErr := settings.GetCacheDir()
+			if cacheDirErr != nil {
+				return nil, fmt.Errorf("failed to get cache directory: %w", cacheDirErr)
+			}
+
 			// Read cache file
-			data, err := os.ReadFile(cachePath)
+			data, err := security.ReadFile(cachePath, security.ReadOptions{
+				BaseDir:           cacheDir,
+				AllowedExtensions: []string{".json"},
+			})
 			if err != nil {
 				return nil, fmt.Errorf("failed to read cache file: %w", err)
 			}
@@ -164,7 +173,9 @@ func (vm *InstallViewModel) LoadSchemaFromFile(ctx context.Context, filePath str
 			runReporter.ReportStatus("Reading file")
 
 			// Read file
-			data, err := os.ReadFile(filePath)
+			data, err := security.ReadFile(filePath, security.ReadOptions{
+				AllowedExtensions: []string{".json"},
+			})
 			if err != nil {
 				return nil, fmt.Errorf("failed to read file: %w", err)
 			}

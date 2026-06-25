@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"aws-profile-manager/internal/logging"
+	"aws-profile-manager/internal/security"
 )
 
 const (
@@ -287,7 +288,10 @@ func (c *Cache) loadFromCache() (*ExtractedData, error) {
 		return nil, err
 	}
 
-	data, err := os.ReadFile(cachePath)
+	data, err := security.ReadFile(cachePath, security.ReadOptions{
+		BaseDir:           c.cacheDir,
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +324,10 @@ func (c *Cache) loadCacheMetadata() (*CacheData, error) {
 		return nil, err
 	}
 
-	data, err := os.ReadFile(cachePath)
+	data, err := security.ReadFile(cachePath, security.ReadOptions{
+		BaseDir:           c.cacheDir,
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return nil, err
 	}

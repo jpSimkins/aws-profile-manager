@@ -233,6 +233,7 @@ func TestConfigFromSettings(t *testing.T) {
 	syncSettings.Strategy = "local"
 	syncSettings.Local.Path = "/test/path"
 	syncSettings.HTTP.URL = "https://example.com"
+	syncSettings.HTTP.AllowInsecureTLS = true
 	syncSettings.S3.Bucket = "test-bucket"
 	syncSettings.S3.Key = "test-key"
 
@@ -249,6 +250,9 @@ func TestConfigFromSettings(t *testing.T) {
 	}
 	if cfg.S3Bucket != "test-bucket" {
 		t.Errorf("Expected S3 bucket test-bucket, got: %s", cfg.S3Bucket)
+	}
+	if !cfg.HTTPBypassTLS {
+		t.Error("Expected HTTPBypassTLS to be true when AllowInsecureTLS is true")
 	}
 }
 

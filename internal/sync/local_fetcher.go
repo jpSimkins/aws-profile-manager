@@ -3,8 +3,8 @@ package sync
 import (
 	"context"
 	"fmt"
-	"os"
 
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/task"
 )
 
@@ -41,7 +41,7 @@ func (l *LocalFetcher) Fetch(ctx context.Context, reporter task.Reporter) ([]byt
 	}
 
 	// Read file
-	data, err := os.ReadFile(l.path)
+	data, err := security.ReadFile(l.path, security.ReadOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read local file: %w", err)
 	}

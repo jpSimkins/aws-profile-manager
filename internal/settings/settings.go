@@ -54,6 +54,7 @@ import (
 	"sync"
 
 	"aws-profile-manager/internal/logging"
+	"aws-profile-manager/internal/security"
 )
 
 // Settings is the root configuration structure containing all application settings.
@@ -168,7 +169,9 @@ func Load(path string) error {
 	}
 
 	// Read file
-	data, err := os.ReadFile(path)
+	data, err := security.ReadFile(path, security.ReadOptions{
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return logging.Log.ErrorfWithDetails("failed to read settings file", err,
 			"path", path)

@@ -39,10 +39,11 @@ type S3Settings struct {
 
 // HTTPSettings holds HTTP/HTTPS-specific sync configuration.
 type HTTPSettings struct {
-	URL       string            `json:"url,omitempty"`        // HTTP/HTTPS URL to configuration file
-	Headers   map[string]string `json:"headers,omitempty"`    // Custom headers for request
-	BasicAuth bool              `json:"basic_auth,omitempty"` // Enable HTTP basic authentication
-	Username  string            `json:"username,omitempty"`   // Username for basic auth
+	URL              string            `json:"url,omitempty"`                // HTTP/HTTPS URL to configuration file
+	Headers          map[string]string `json:"headers,omitempty"`            // Custom headers for request
+	BasicAuth        bool              `json:"basic_auth,omitempty"`         // Enable HTTP basic authentication
+	Username         string            `json:"username,omitempty"`           // Username for basic auth
+	AllowInsecureTLS bool              `json:"allow_insecure_tls,omitempty"` // Allow self-signed/invalid TLS certs (NOT RECOMMENDED)
 }
 
 // GitSettings holds Git-specific sync configuration.
@@ -71,7 +72,9 @@ func GetDefaultSync() SyncSettings {
 			Region: "us-west-2",
 			UseSSO: true,
 		},
-		HTTP: HTTPSettings{},
+		HTTP: HTTPSettings{
+			AllowInsecureTLS: false,
+		},
 		Git: GitSettings{
 			Branch:   "main",
 			FilePath: "aws-config.json",
@@ -312,12 +315,20 @@ func (s *SyncSettings) GetSchema() Schema {
 							Default:     false,
 							Order:       2,
 						},
+						"allow_insecure_tls": {
+							Type:        "bool",
+							Label:       "Allow Insecure TLS (Self-Signed Certs)",
+							Description: "Disable TLS certificate verification for HTTPS fetches (not recommended for production)",
+							Required:    false,
+							Default:     false,
+							Order:       3,
+						},
 						"username": {
 							Type:        "string",
 							Label:       "Username",
 							Description: "Username for basic authentication",
 							Required:    false,
-							Order:       3,
+							Order:       4,
 							Placeholder: "admin",
 						},
 					},

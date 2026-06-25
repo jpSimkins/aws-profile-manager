@@ -66,6 +66,7 @@ func (t *SubprocessTask) Execute(ctx context.Context, reporter Reporter) (*Resul
 	}
 
 	// Create command with context (auto-kills on cancel)
+	// #nosec G204 -- Command/args are intentionally provided by trusted callers of the task API.
 	cmd := exec.CommandContext(execCtx, t.Name, t.Args...)
 
 	// Set explicit environment (only what we're given)

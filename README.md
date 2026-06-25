@@ -351,6 +351,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 - **[Contributing Guide](CONTRIBUTING.md)** - Guidelines for contributing code, docs, and ideas
 - **[Contributors](CONTRIBUTORS.md)** - Recognition of our contributors
 - **[Developer Guide](DEVELOPER.md)** - Complete development setup and workflow
+- **[Gosec Suppression Policy](DEVELOPER.md#gosec-suppression-policy)** - When to fix security findings vs use targeted #nosec comments
 
 Before contributing, please review our coding standards in [`.github/copilot-instructions.md`](.github/copilot-instructions.md).
 

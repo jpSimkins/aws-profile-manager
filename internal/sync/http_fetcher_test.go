@@ -27,7 +27,6 @@ func TestHttpFetcher_Success(t *testing.T) {
 		5*time.Second,
 		0, // No retries for success case
 		0,
-		true,
 		true, // Bypass SSRF for test server
 		false,
 	)
@@ -66,7 +65,6 @@ func TestHttpFetcher_CustomHeaders(t *testing.T) {
 		0,
 		0,
 		true,
-		true,
 		false,
 	)
 
@@ -89,7 +87,6 @@ func TestHttpFetcher_StatusError(t *testing.T) {
 		5*time.Second,
 		0,
 		0,
-		true,
 		true,
 		false,
 	)
@@ -120,7 +117,6 @@ func TestHttpFetcher_Retry(t *testing.T) {
 		5*time.Second,
 		3,                   // 3 retries
 		10*time.Millisecond, // Short delay for testing
-		true,
 		true,
 		false,
 	)
@@ -153,7 +149,6 @@ func TestHttpFetcher_RetryExhaustion(t *testing.T) {
 		2, // 2 retries = 3 total attempts
 		10*time.Millisecond,
 		true,
-		true,
 		false,
 	)
 
@@ -180,7 +175,6 @@ func TestHttpFetcher_ContextCancellation(t *testing.T) {
 		10*time.Second,
 		0,
 		0,
-		true,
 		true,
 		false,
 	)
@@ -212,7 +206,6 @@ func TestHttpFetcher_Timeout(t *testing.T) {
 		50*time.Millisecond, // Timeout before server responds
 		0,
 		0,
-		true,
 		true,
 		false,
 	)
@@ -246,7 +239,6 @@ func TestHttpFetcher_Validate(t *testing.T) {
 				tt.timeout,
 				tt.retries,
 				0,
-				true,
 				false,
 				false,
 			)
@@ -266,7 +258,6 @@ func TestHttpFetcher_String(t *testing.T) {
 		5*time.Second,
 		3,
 		0,
-		true,
 		false,
 		false,
 	)

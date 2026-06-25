@@ -127,7 +127,9 @@ AI is a tool, like an IDE or linter. The code is still written, reviewed, tested
 npm run make:test-coverage  # Run tests with coverage (most used)
 npm run make:fmt           # Format code  
 npm run make:lint          # Lint code
+npm run make:gosec         # Run static security scan (gosec)
 npm run make:vuln          # Run vulnerability scan
+npm run make:security      # Run gosec + govulncheck
 npm run make:build         # Build the application
 
 # 2. SECONDARY: Use make for development-specific tasks
@@ -154,7 +156,10 @@ go run ./cmd/aws-profile-manager/main.go --help # CLI help
 - **`npm run make:fmt`** - Format Go code
 - **`npm run make:lint`** - Run code linter
 - **`npm run make:vet`** - Run go vet static analysis
+- **`npm run make:gosec`** - Run static security scanner (gosec)
 - **`npm run make:vuln`** - Run vulnerability scanner (govulncheck)
+- **`npm run make:security`** - Run gosec + govulncheck
+- **`npm run make:security-verbose`** - Run gosec + verbose govulncheck
 - **`npm run make:clean`** - Clean build artifacts
 - **`npm run make:help`** - Show all make targets
 - **`npm run run:go:gui`** - Run GUI directly via `go run` (no build step)
@@ -426,11 +431,37 @@ go run ./cmd/aws-profile-manager/main.go gui      # Launch GUI directly
 1. Format code: `npm run make:fmt`
 2. Run static analysis: `npm run make:vet`
 3. Run linter: `npm run make:lint`
-4. Run vulnerability scan: `npm run make:vuln`
-5. Run full test suite: `npm run make:test-coverage`
-6. Verify build succeeds: `npm run make:build`
-7. Update tests for new functionality
-8. Maintain or improve test coverage
+4. Run static security scan: `npm run make:gosec`
+5. Run vulnerability scan: `npm run make:vuln`
+6. Run full test suite: `npm run make:test-coverage`
+7. Verify build succeeds: `npm run make:build`
+8. Update tests for new functionality
+9. Maintain or improve test coverage
+
+### Gosec Suppression Policy
+Use this decision rule for gosec findings:
+
+1. If the finding indicates real risk, fix the code.
+2. If the behavior is intentional and required, add a targeted `#nosec` on the exact line.
+3. Never add broad file-level or package-level suppressions for convenience.
+
+Rules for acceptable `#nosec` usage:
+
+- Keep suppressions local to a single statement.
+- Include rule IDs when possible (for example: `#nosec G204`).
+- Add a short reason in the same comment.
+- Prefer safe wrappers/validation utilities over repeated suppressions.
+
+Examples:
+
+- Preferred: `exec.Command(...) // #nosec G204 -- Command is fixed and inputs are validated.`
+- Avoid: disabling entire rules for all packages when only one line needs exception.
+
+Repository defaults:
+
+- `make gosec` excludes fixture-heavy directories (`internal/schema/test`, `internal/backup/test`).
+- `make gosec` excludes low-signal `G104` by default to reduce ignored-write noise.
+- CI uses the same gosec behavior via `make gosec-sarif`.
 
 ### Development Best Practices
 - Use npm scripts as the primary interface for development tasks

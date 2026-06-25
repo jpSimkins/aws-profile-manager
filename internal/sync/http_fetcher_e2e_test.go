@@ -34,7 +34,6 @@ func TestHttpFetcher_RealHTTP(t *testing.T) {
 		30*time.Second,
 		3,
 		2*time.Second,
-		true, // Verify TLS
 		false,
 		false,
 	)
@@ -94,7 +93,6 @@ func TestHttpFetcher_RealHTTPWithAuth(t *testing.T) {
 		30*time.Second,
 		3,
 		2*time.Second,
-		true,
 		false,
 		false,
 	)

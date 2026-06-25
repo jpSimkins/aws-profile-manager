@@ -3,6 +3,7 @@ package viewmodels
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -491,7 +492,12 @@ func (vm *SettingsViewModel) populateValuesFromStruct(currentValues map[string]i
 			// Normalise all integer types to plain int for consistent form handling.
 			currentValues[fullKey] = int(field.Int())
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			currentValues[fullKey] = int(field.Uint())
+			uintValue := field.Uint()
+			if uintValue > uint64(math.MaxInt) {
+				currentValues[fullKey] = math.MaxInt
+			} else {
+				currentValues[fullKey] = int(uintValue)
+			}
 		case reflect.String:
 			currentValues[fullKey] = field.String()
 		case reflect.Float32, reflect.Float64:

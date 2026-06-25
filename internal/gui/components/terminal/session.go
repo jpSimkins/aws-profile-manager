@@ -55,6 +55,7 @@ func launchMacOS(_ string, env map[string]string, command string, exitOnComplete
 		`tell application "Terminal" to do script "%s"`,
 		strings.Join(parts, "; "),
 	)
+	// #nosec G204 -- osascript invocation is intentional for launching macOS Terminal.
 	cmd := exec.Command("osascript", "-e", script)
 	cmd.Env = os.Environ()
 	if err := cmd.Start(); err != nil {
@@ -82,6 +83,7 @@ func launchWindows(terminal string, env map[string]string, command string, exitO
 	}
 
 	args := []string{"/c", "start", terminal, "/k", strings.Join(sets, " & ")}
+	// #nosec G204 -- Terminal launch command is intentional and terminal path is resolved by settings.
 	cmd := exec.Command("cmd.exe", args...)
 	cmd.Env = os.Environ()
 	if err := cmd.Start(); err != nil {
@@ -114,6 +116,7 @@ func launchLinux(terminal string, env map[string]string, command string, exitOnC
 	}
 
 	args := terminalArgs(terminal, shellCmd, shell)
+	// #nosec G204 -- Terminal command execution is intentional for opening a user shell session.
 	cmd := exec.Command(terminal, args...)
 	cmd.Env = os.Environ()
 	if err := cmd.Start(); err != nil {

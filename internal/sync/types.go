@@ -60,7 +60,6 @@ type SyncConfig struct {
 	HTTPTimeout    time.Duration     // Request timeout
 	HTTPRetries    int               // Number of retries
 	HTTPRetryDelay time.Duration     // Delay between retries
-	HTTPTLSVerify  bool              // Verify TLS certificates
 	HTTPBypassSSRF bool              // Bypass SSRF protection (dangerous!)
 	HTTPBypassTLS  bool              // Bypass TLS verification (dangerous!)
 

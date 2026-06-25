@@ -602,6 +602,7 @@ func restartApp() {
 		_ = logging.Log.Error("Failed to get executable path for restart", "error", err)
 		return
 	}
+	// #nosec G204,G702 -- Re-exec uses current binary and process args/env for intentional app restart.
 	if err := syscall.Exec(exe, os.Args, os.Environ()); err != nil {
 		_ = logging.Log.Error("Failed to restart application", "error", err)
 	}
