@@ -150,7 +150,8 @@ func ConfigFromSettings(syncSettings *settings.SyncSettings) SyncConfig {
 		HTTPTimeout:    30 * time.Second,
 		HTTPRetries:    3,
 		HTTPRetryDelay: 2 * time.Second,
-		HTTPTLSVerify:  true,
+		HTTPTLSVerify:  !syncSettings.HTTP.AllowInsecureTLS,
+		HTTPBypassTLS:  syncSettings.HTTP.AllowInsecureTLS,
 
 		// S3 settings
 		S3Bucket:  syncSettings.S3.Bucket,

@@ -17,6 +17,9 @@ func TestGetDefaultSync(t *testing.T) {
 	if sync.Strategy != "local" {
 		t.Errorf("Expected default strategy local, got %s", sync.Strategy)
 	}
+	if sync.HTTP.AllowInsecureTLS {
+		t.Error("HTTP.AllowInsecureTLS should be false by default")
+	}
 }
 
 func TestSyncValidate(t *testing.T) {
@@ -230,7 +233,7 @@ func TestSyncGetSchema(t *testing.T) {
 
 	httpField := schema.Fields["http"]
 	if httpField.Nested != nil {
-		expectedHTTPFields := []string{"url", "basic_auth", "username"}
+		expectedHTTPFields := []string{"url", "basic_auth", "allow_insecure_tls", "username"}
 		for _, field := range expectedHTTPFields {
 			if _, exists := httpField.Nested.Fields[field]; !exists {
 				t.Errorf("HTTP nested schema should have '%s' field", field)
