@@ -343,6 +343,7 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
 		--name "$(APP_NAME)" \
+		$(FYNE_SOURCE_ARG) \
 		$(FYNE_ICON_ARG) \
 		$(FYNE_APP_ID_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)

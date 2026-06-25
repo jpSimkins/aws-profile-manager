@@ -4,7 +4,7 @@ Website = "https://github.com/jpSimkins/aws-profile-manager"
 Icon = "Icon.png"
 Name = "AWS Profile Manager"
 ID = "com.son9ne.aws-profile-manager"
-Version = "0.2.2"
+Version = "0.3.0"
 Build = 10
 
 [Source]
