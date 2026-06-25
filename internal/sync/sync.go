@@ -150,7 +150,6 @@ func ConfigFromSettings(syncSettings *settings.SyncSettings) SyncConfig {
 		HTTPTimeout:    30 * time.Second,
 		HTTPRetries:    3,
 		HTTPRetryDelay: 2 * time.Second,
-		HTTPTLSVerify:  !syncSettings.HTTP.AllowInsecureTLS,
 		HTTPBypassTLS:  syncSettings.HTTP.AllowInsecureTLS,
 
 		// S3 settings
@@ -191,7 +190,6 @@ func createFetcher(cfg SyncConfig) (Fetcher, error) {
 			cfg.HTTPTimeout,
 			cfg.HTTPRetries,
 			cfg.HTTPRetryDelay,
-			cfg.HTTPTLSVerify,
 			cfg.HTTPBypassSSRF,
 			cfg.HTTPBypassTLS,
 		), nil

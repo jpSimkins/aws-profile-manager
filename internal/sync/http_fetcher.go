@@ -18,7 +18,6 @@ type HttpFetcher struct {
 	timeout    time.Duration
 	retries    int
 	retryDelay time.Duration
-	tlsVerify  bool
 	bypassSSRF bool
 	bypassTLS  bool
 }
@@ -31,7 +30,6 @@ type HttpFetcher struct {
 //   - timeout: Request timeout
 //   - retries: Number of retry attempts
 //   - retryDelay: Delay between retries
-//   - tlsVerify: Whether to verify TLS certificates
 //   - bypassSSRF: Whether to bypass SSRF protection
 //   - bypassTLS: Whether to bypass TLS verification
 //
@@ -43,7 +41,6 @@ func NewHttpFetcher(
 	timeout time.Duration,
 	retries int,
 	retryDelay time.Duration,
-	tlsVerify bool,
 	bypassSSRF bool,
 	bypassTLS bool,
 ) *HttpFetcher {
@@ -53,7 +50,6 @@ func NewHttpFetcher(
 		timeout:    timeout,
 		retries:    retries,
 		retryDelay: retryDelay,
-		tlsVerify:  tlsVerify,
 		bypassSSRF: bypassSSRF,
 		bypassTLS:  bypassTLS,
 	}
@@ -118,7 +114,7 @@ func (h *HttpFetcher) fetchOnce(ctx context.Context) ([]byte, error) {
 	}
 
 	// Configure TLS if needed
-	if !h.tlsVerify || h.bypassTLS {
+	if h.bypassTLS {
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true, // #nosec G402 -- User explicitly requested TLS verification bypass.

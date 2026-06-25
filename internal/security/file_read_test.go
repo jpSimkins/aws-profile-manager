@@ -1,5 +1,4 @@
 package security
-package security
 
 import (
 	"os"
