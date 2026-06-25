@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/task"
 )
 
@@ -145,7 +146,7 @@ func (g *GitFetcher) Fetch(ctx context.Context, reporter task.Reporter) ([]byte,
 	configPath := filepath.Join(repoPath, g.filePath)
 	reporter.ReportStatus(fmt.Sprintf("Reading config file: %s", g.filePath))
 
-	data, err := os.ReadFile(configPath)
+	data, err := security.ReadFile(configPath, security.ReadOptions{BaseDir: repoPath})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file %s: %w", g.filePath, err)
 	}

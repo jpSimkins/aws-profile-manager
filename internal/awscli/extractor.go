@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"aws-profile-manager/internal/logging"
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/settings"
 )
 
@@ -16,7 +17,7 @@ import (
 //
 // The Extractor reads and parses AWS CLI config files (~/.aws/config), extracting
 // profile and SSO session configurations. It supports both modern SSO profiles
-// (using sso-session) and legacy SSO profiles (using sso_start_url directly).
+// and traditional IAM/AssumeRole profiles.
 //
 // Parsing Features:
 //   - Profile extraction: [profile name] sections
@@ -103,7 +104,7 @@ func (e *Extractor) ExtractFromFile() (*ExtractedData, error) {
 func (e *Extractor) ExtractFromPath(configPath string) (*ExtractedData, error) {
 	logging.Debug.Logf("Extracting AWS CLI configuration from file: %s", configPath)
 
-	file, err := os.Open(configPath)
+	file, err := security.OpenFile(configPath, security.ReadOptions{})
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, logging.Log.Errorf("AWS CLI config file not found: %s", configPath)
@@ -440,11 +441,13 @@ func (e *Extractor) ValidateConfigFile() error {
 	}
 
 	// Try to open for reading
-	file, err := os.Open(e.configPath)
+	file, err := security.OpenFile(e.configPath, security.ReadOptions{})
 	if err != nil {
 		return logging.Log.ErrorWithDetails("Cannot read AWS CLI config file", err)
 	}
-	file.Close()
+	if closeErr := file.Close(); closeErr != nil {
+		return logging.Log.ErrorWithDetails("Cannot close AWS CLI config file", closeErr)
+	}
 
 	logging.Debug.Logf("AWS CLI config file validation passed: %s", e.configPath)
 	return nil

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"aws-profile-manager/internal/logging"
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/settings"
 )
 
@@ -289,6 +290,7 @@ func (sm *SessionManager) CheckSessionByCLI(sessionName string) (bool, error) {
 	}
 
 	// Try to list SSO session accounts
+	// #nosec G204 -- AWS CLI invocation is intentional; session name comes from parsed AWS config.
 	cmd := exec.Command("aws", "sso", "list-accounts", "--sso-session", sessionName)
 	cmd.Env = append(os.Environ(), "AWS_PAGER=")
 
@@ -316,6 +318,7 @@ func (sm *SessionManager) LoginToSession(sessionName string) error {
 		return logging.Log.Error("AWS CLI is not available for login")
 	}
 
+	// #nosec G204 -- AWS CLI invocation is intentional; session name comes from parsed AWS config.
 	cmd := exec.Command("aws", "sso", "login", "--sso-session", sessionName)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -551,7 +554,10 @@ func (sm *SessionManager) findCacheFilesForSession(session SsoSession) ([]string
 //   - *SsoCacheFile: Parsed cache file contents
 //   - error: Any error encountered reading or parsing the file
 func (sm *SessionManager) readCacheFile(filePath string) (*SsoCacheFile, error) {
-	data, err := os.ReadFile(filePath)
+	data, err := security.ReadFile(filePath, security.ReadOptions{
+		BaseDir:           sm.cacheDir,
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return nil, logging.Log.ErrorfWithDetails(fmt.Sprintf("failed to read cache file %s", filePath), err)
 	}

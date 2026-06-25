@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"aws-profile-manager/internal/security"
 )
 
 // =============================================================================
@@ -23,7 +25,7 @@ import (
 //   - []string: Lines from the file (empty slice if file doesn't exist)
 //   - error: Any error encountered during read
 func readConfigFile(configPath string) ([]string, error) {
-	file, err := os.Open(configPath)
+	file, err := security.OpenFile(configPath, security.ReadOptions{})
 	if err != nil {
 		if os.IsNotExist(err) {
 			// File doesn't exist yet - return empty slice
@@ -55,7 +57,7 @@ func readConfigFile(configPath string) ([]string, error) {
 //   - string: File content
 //   - error: Any error encountered during read
 func readFileContent(path string) (string, error) {
-	content, err := os.ReadFile(path)
+	content, err := security.ReadFile(path, security.ReadOptions{})
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
 	}
@@ -85,6 +87,7 @@ func writeConfigFile(configPath string, lines []string) (err error) {
 	}
 
 	// Open file for writing
+	// #nosec G304 -- Config output path is controlled by application settings/CLI options.
 	file, err := os.Create(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to create config file: %w", err)

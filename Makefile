@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev deps-update lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev deps-update lint fmt vet gosec gosec-sarif vuln vuln-verbose security security-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -29,6 +29,10 @@ LDFLAGS := -s -w -X aws-profile-manager/internal/core.Version=$(VERSION) -X aws-
 # Tool locations / versions
 GOPATH_BIN := $(shell go env GOPATH)/bin
 GOLANGCI_LINT_VERSION ?= latest
+# Reduce gosec noise from intentionally fake test fixtures.
+GOSEC_EXCLUDE_DIRS ?= -exclude-dir=internal/schema/test -exclude-dir=internal/backup/test
+# Reduce gosec noise from intentionally ignored print/log write errors.
+GOSEC_EXCLUDE_RULES ?= G104
 
 # Host OS/arch helpers and naming
 HOST_OS   := $(shell go env GOOS)
@@ -101,6 +105,8 @@ deps-dev: ## Install developer tools (linters, debugger)
 	@echo "Installing developer tools..."
 	@echo "• golangci-lint $(GOLANGCI_LINT_VERSION)"
 	@GOBIN="$(GOPATH_BIN)" go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	@echo "• gosec"
+	@GOBIN="$(GOPATH_BIN)" go install github.com/securego/gosec/v2/cmd/gosec@latest
 	@echo "• dlv (Delve debugger)"
 	@GONOSUMDB=* GOBIN="$(GOPATH_BIN)" go install github.com/go-delve/delve/cmd/dlv@latest
 	@echo "• govulncheck"
@@ -226,6 +232,16 @@ vet: ## Run go vet
 	@echo "Running go vet..."
 	go vet $(CMD_DIR)/... $(SRC_DIR)/...
 
+gosec: ## Run static security analysis (gosec)
+	@command -v "$(GOPATH_BIN)/gosec" >/dev/null 2>&1 || $(MAKE) deps-dev
+	@echo "Running gosec static security analysis..."
+	"$(GOPATH_BIN)/gosec" -exclude=$(GOSEC_EXCLUDE_RULES) $(GOSEC_EXCLUDE_DIRS) ./...
+
+gosec-sarif: ## Run static security analysis and emit SARIF
+	@command -v "$(GOPATH_BIN)/gosec" >/dev/null 2>&1 || $(MAKE) deps-dev
+	@echo "Running gosec static security analysis (SARIF)..."
+	"$(GOPATH_BIN)/gosec" -exclude=$(GOSEC_EXCLUDE_RULES) $(GOSEC_EXCLUDE_DIRS) -no-fail -fmt sarif -out gosec-results.sarif ./...
+
 vuln: ## Run vulnerability scanner (govulncheck)
 	@command -v "$(GOPATH_BIN)/govulncheck" >/dev/null 2>&1 || $(MAKE) deps-dev
 	@echo "Running vulnerability scan..."
@@ -235,6 +251,10 @@ vuln-verbose: ## Run vulnerability scanner with full details (includes non-calle
 	@command -v "$(GOPATH_BIN)/govulncheck" >/dev/null 2>&1 || $(MAKE) deps-dev
 	@echo "Running vulnerability scan (verbose)..."
 	"$(GOPATH_BIN)/govulncheck" -show verbose ./...
+
+security: gosec vuln ## Run static security + vulnerability scanning
+
+security-verbose: gosec vuln-verbose ## Run static security + verbose vulnerability scanning
 
 # -----------------------------------------------------------------------------
 # Installation (Linux only for now)

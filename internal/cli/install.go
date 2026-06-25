@@ -11,6 +11,7 @@ import (
 	"aws-profile-manager/internal/logging"
 	"aws-profile-manager/internal/profiles"
 	"aws-profile-manager/internal/schema"
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/settings"
 	"aws-profile-manager/internal/sync"
 	"aws-profile-manager/internal/task"
@@ -70,7 +71,9 @@ func runInstall(cmd *cobra.Command, args []string) error {
 	if configFile != "" {
 		// Load from explicit file (--config flag)
 		logging.Debug.Log("Loading from explicit config file", "path", configFile)
-		data, err := os.ReadFile(configFile)
+		data, err := security.ReadFile(configFile, security.ReadOptions{
+			AllowedExtensions: []string{".json"},
+		})
 		if err != nil {
 			return logging.Log.ErrorfWithDetails("failed to read config file", err)
 		}

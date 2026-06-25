@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"aws-profile-manager/internal/security"
 )
 
 // ReadBackupFile reads and parses a backup file.
@@ -28,7 +30,9 @@ import (
 //	}
 func ReadBackupFile(path string) (*BackupFile, error) {
 	// Read file
-	data, err := os.ReadFile(path)
+	data, err := security.ReadFile(path, security.ReadOptions{
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read backup file: %w", err)
 	}

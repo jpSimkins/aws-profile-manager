@@ -121,7 +121,7 @@ func (h *HttpFetcher) fetchOnce(ctx context.Context) ([]byte, error) {
 	if !h.tlsVerify || h.bypassTLS {
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, //nolint:gosec // User explicitly bypassed
+				InsecureSkipVerify: true, // #nosec G402 -- User explicitly requested TLS verification bypass.
 			},
 		}
 	}

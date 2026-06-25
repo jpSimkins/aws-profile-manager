@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"aws-profile-manager/internal/schema"
+	"aws-profile-manager/internal/security"
 )
 
 // CacheEntry represents a cached configuration with metadata.
@@ -79,7 +80,10 @@ func (c *Cache) Get() (*CacheEntry, error) {
 	}
 
 	// Read cache file
-	data, err := os.ReadFile(cacheFile)
+	data, err := security.ReadFile(cacheFile, security.ReadOptions{
+		BaseDir:           c.cacheDir,
+		AllowedExtensions: []string{".json"},
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to read cache file: %w", err)
 	}

@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"aws-profile-manager/internal/logging"
 	"aws-profile-manager/internal/profiles"
+	"aws-profile-manager/internal/security"
 	"aws-profile-manager/internal/settings"
 	"aws-profile-manager/internal/task"
 )
@@ -177,7 +177,9 @@ func ExecuteImport(
 			)
 
 			// Read settings from backup file (JSON file contains settings directly)
-			data, err := os.ReadFile(settingsBackupPath)
+			data, err := security.ReadFile(settingsBackupPath, security.ReadOptions{
+				AllowedExtensions: []string{".json"},
+			})
 			if err != nil {
 				_ = logging.Log.Error("Failed to read settings backup for restore",
 					"error", err,
@@ -372,7 +374,9 @@ func ImportProfiles(
 			)
 
 			// Read settings from backup file (JSON file contains settings directly)
-			data, err := os.ReadFile(settingsBackupPath)
+			data, err := security.ReadFile(settingsBackupPath, security.ReadOptions{
+				AllowedExtensions: []string{".json"},
+			})
 			if err != nil {
 				_ = logging.Log.Error("Failed to read settings backup for restore",
 					"error", err,
