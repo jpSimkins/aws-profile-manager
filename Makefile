@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev deps-update lint fmt vet vuln vuln-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -102,6 +102,11 @@ deps-dev: ## Install developer tools (linters, debugger)
 # Convenience: Install both Go and system deps
 # -----------------------------------------------------------------------------
 deps-all: deps deps-system deps-dev
+
+deps-update: ## Update dependencies to latest versions
+	@echo "Updating dependencies..."
+	go get -u ./...
+	go mod tidy
 
 # -----------------------------------------------------------------------------
 # Development commands
