@@ -39,6 +39,14 @@ FYNE_SOURCE_ARG := --source-dir $(MAIN_PATH)
 FYNE_ICON_ARG := --icon $(abspath Icon.png)
 FYNE_APP_ID_ARG := --app-id $(APP_ID)
 
+# Windows packaging requires source-dir metadata resolution. On Linux/macOS,
+# avoid source-dir so fyne packages the already versioned executable.
+ifeq ($(HOST_OS),windows)
+FYNE_PACKAGE_SOURCE_ARG := $(FYNE_SOURCE_ARG)
+else
+FYNE_PACKAGE_SOURCE_ARG :=
+endif
+
 # Proper extension for current host (used by build)
 EXE_EXT :=
 ifeq ($(HOST_OS),windows)
@@ -341,12 +349,17 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		--release \
 		--name "$(APP_NAME)" \
 		--app-version "$(APP_VERSION)" \
-		$(FYNE_SOURCE_ARG) \
+		$(FYNE_PACKAGE_SOURCE_ARG) \
 		$(FYNE_ICON_ARG) \
 		$(FYNE_APP_ID_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)
 	@if [ "$(HOST_OS)" = "linux" ]; then \
-		mv "$(APP_NAME).tar.xz" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz"; \
+		tmp_pkg_dir=$$(mktemp -d); \
+		tar -xf "$(APP_NAME).tar.xz" -C "$$tmp_pkg_dir"; \
+		sed -i 's/^Icon := "$(APP_ID)"$$/Icon := "$(APP_ID).png"/' "$$tmp_pkg_dir/aws-profile-manager/Makefile"; \
+		tar -C "$$tmp_pkg_dir" -cJf "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz" aws-profile-manager; \
+		rm -rf "$$tmp_pkg_dir"; \
+		rm -f "$(APP_NAME).tar.xz"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz"; \
 	elif [ "$(HOST_OS)" = "darwin" ]; then \
 		zip -r "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip" "$(APP_NAME).app"; \
