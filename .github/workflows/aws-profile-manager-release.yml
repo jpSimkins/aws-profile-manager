@@ -144,8 +144,8 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
-      - name: Install runtime dependencies
-        run: make deps-runtime
+      - name: Install build dependencies (runtime + GUI system)
+        run: make deps-build
 
       - name: Run tests
         run: make test
