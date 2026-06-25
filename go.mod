@@ -1,6 +1,6 @@
 module aws-profile-manager
 
-go 1.25.10
+go 1.26
 
 require (
 	fyne.io/fyne/v2 v2.7.4

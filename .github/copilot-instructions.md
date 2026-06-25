@@ -16,7 +16,7 @@
 AWS Profile Manager is a Go CLI/GUI tool for managing AWS CLI profiles with centralized configuration distribution.
 
 ### Quick Facts
-- **Language**: Go 1.21+
+- **Language**: Go 1.26+
 - **Architecture**: [Standard Go project layout](https://github.com/golang-standards/project-layout) (`cmd/`, `internal/`)
 - **Frameworks**: Cobra (CLI), Fyne 2.7.0 (GUI)
 - **Test Coverage**: 71.5% (target: 95%+)

@@ -30,7 +30,7 @@ We are committed to providing a welcoming and inclusive environment. By particip
 
 Before contributing, ensure you have:
 
-- **Go 1.22+** - For building and testing
+- **Go 1.26+** - For building and testing
 - **Node.js/npm** - For convenience scripts
 - **Git** - For version control
 - **System dependencies** - For GUI development (installed via `make deps-system`)
