@@ -107,8 +107,12 @@ deps-dev: ## Install developer tools (linters, debugger)
 	@GOBIN="$(GOPATH_BIN)" go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	@echo "• gosec"
 	@GOBIN="$(GOPATH_BIN)" go install github.com/securego/gosec/v2/cmd/gosec@latest
-	@echo "• dlv (Delve debugger)"
-	@GONOSUMDB=* GOBIN="$(GOPATH_BIN)" go install github.com/go-delve/delve/cmd/dlv@latest
+	@if [ "$(HOST_OS)" = "windows" ] && [ "$(HOST_ARCH)" = "arm64" ]; then \
+		echo "• dlv (Delve debugger) - skipped on windows/arm64 (unsupported)"; \
+	else \
+		echo "• dlv (Delve debugger)"; \
+		GONOSUMDB=* GOBIN="$(GOPATH_BIN)" go install github.com/go-delve/delve/cmd/dlv@latest; \
+	fi
 	@echo "• govulncheck"
 	@GOBIN="$(GOPATH_BIN)" go install golang.org/x/vuln/cmd/govulncheck@latest
 
