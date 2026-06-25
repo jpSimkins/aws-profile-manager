@@ -133,6 +133,10 @@ npm run make:security      # Run gosec + govulncheck
 npm run make:build         # Build the application
 
 # 2. SECONDARY: Use make for development-specific tasks
+make deps-runtime         # Base Go module deps only (no GUI system libraries)
+make deps-build           # Runtime deps + GUI system deps (no dev tools)
+make deps-ci-quality      # Runtime deps + quality tools (lint/security)
+make deps-all             # Full local setup (runtime + system + dev tools)
 make deps-system          # Install GUI system dependencies
 make help                 # See all available commands
 
@@ -144,8 +148,12 @@ go run ./cmd/aws-profile-manager/main.go --help # CLI help
 
 **💡 Tip**: For realistic testing with SSO sessions and profiles, sync your AWS CLI data to `.dev/aws/` (see Development Data Setup above).
 
+Dependency layering note:
+- Use `make deps-runtime` for CLI-focused test/build flows.
+- For GUI build/package flows, also run `make deps-system`, or just use `make deps-build`.
+
 ### Available npm Scripts
-- **`npm run setup`** - One-time setup (install dependencies + GUI libraries)
+- **`npm run setup`** - One-time full setup (runtime deps + GUI libraries + dev tools)
 - **`npm run sync-dev-data`** - Sync AWS CLI config/cache to development directories
 - **`npm run reset-dev`** - Reset development data (clears AWS config, cache, cheat sheet)
 - **`npm run make:build`** - Build application binary
@@ -469,6 +477,8 @@ Repository defaults:
 - Follow existing naming conventions for profiles and sessions
 - Use structured logging with appropriate log levels
 - Write comprehensive tests with proper isolation (temp directories)
+- Use `make deps-runtime` for build/release flows that should avoid developer tools
+- Use `make deps-build` when GUI system libraries are required without installing dev tools
 - Install GUI dependencies with `make deps-system` when needed
 
 ## Future Development

@@ -55,6 +55,16 @@ Before contributing, ensure you have:
    npm run setup
    ```
 
+   Dependency target reference:
+   - `make deps-runtime`      - Base Go module deps only (no GUI system libraries)
+   - `make deps-build`        - Runtime deps + GUI system deps (no dev tools)
+   - `make deps-ci --quality` - Runtime deps + quality tools (lint/security)
+   - `make deps-all`          - Full local setup (runtime + system + dev tools)
+   - `make deps-system`       - Install GUI system dependencies
+
+
+   For GUI build/package workflows, use `make deps-build` (or run `make deps-runtime` + `make deps-system`).
+
 5. **Verify everything works:**
    ```bash
    make test
