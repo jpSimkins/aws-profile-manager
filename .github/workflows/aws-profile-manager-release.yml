@@ -528,9 +528,9 @@ jobs:
 
           files: |
             artifacts/build-*/aws-profile-manager-*
-            artifacts/build-*/AWS Profile Manager-*.zip
-            artifacts/build-*/AWS Profile Manager-*.tar.xz
-            artifacts/build-*/AWS Profile Manager-*.exe
+            artifacts/build-*/AWS.Profile.Manager-*.zip
+            artifacts/build-*/AWS.Profile.Manager-*.tar.xz
+            artifacts/build-*/AWS.Profile.Manager-*.exe
             artifacts/build-*/checksums-*.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -540,6 +540,6 @@ jobs:
         with:
           subject-path: |
             artifacts/build-*/aws-profile-manager-*
-            artifacts/build-*/AWS Profile Manager-*.zip
-            artifacts/build-*/AWS Profile Manager-*.tar.xz
-            artifacts/build-*/AWS Profile Manager-*.exe
+            artifacts/build-*/AWS.Profile.Manager-*.zip
+            artifacts/build-*/AWS.Profile.Manager-*.tar.xz
+            artifacts/build-*/AWS.Profile.Manager-*.exe
