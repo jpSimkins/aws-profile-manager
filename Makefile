@@ -1,4 +1,4 @@
-.PHONY: help build build-all build-local run clean test test-coverage deps deps-dev deps-update lint fmt vet gosec gosec-sarif vuln vuln-verbose security security-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
+.PHONY: help build build-all build-local run clean test test-coverage deps-runtime deps deps-system deps-build deps-dev deps-ci-quality deps-all deps-update lint fmt vet gosec gosec-sarif vuln vuln-verbose security security-verbose package-desktop install install-desktop uninstall-desktop dev run-help embed-config embed-logo embed-all clean-embed fyne-tool icon generate-logos
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -72,11 +72,16 @@ clean-dev:
 	rm -f ./.dev/desktop/*.md
 
 # -----------------------------------------------------------------------------
-# Download and tidy Go module dependencies
+# Download Go module dependencies needed for builds/tests
 # -----------------------------------------------------------------------------
-deps: ## Download and tidy dependencies
+deps-runtime: ## Download module dependencies (runtime/build only)
 	@echo "Installing dependencies..."
 	go mod download
+
+# -----------------------------------------------------------------------------
+# Download and tidy Go module dependencies (developer workflow)
+# -----------------------------------------------------------------------------
+deps: deps-runtime ## Download and tidy dependencies
 	go mod tidy
 
 # -----------------------------------------------------------------------------
@@ -119,7 +124,11 @@ deps-dev: ## Install developer tools (linters, debugger)
 # -----------------------------------------------------------------------------
 # Convenience: Install both Go and system deps
 # -----------------------------------------------------------------------------
-deps-all: deps deps-system deps-dev
+deps-build: deps-runtime deps-system ## Install build dependencies (runtime + GUI system)
+
+deps-ci-quality: deps-runtime deps-dev ## Install CI quality dependencies (runtime + dev tools)
+
+deps-all: deps-build deps-dev ## Install all dependencies (developer convenience)
 
 deps-update: ## Update dependencies to latest versions
 	@echo "Updating dependencies..."
@@ -137,7 +146,7 @@ version: ## Show version information
 # -----------------------------------------------------------------------------
 # Build for current platform
 # -----------------------------------------------------------------------------
-build: deps ## Build for current platform
+build: deps-runtime ## Build for current platform
 	@echo "Building $(BINARY_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=1 go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT) $(MAIN_PATH)
@@ -146,7 +155,7 @@ build: deps ## Build for current platform
 # -----------------------------------------------------------------------------
 # Build for current platform with an explicit suffix
 # -----------------------------------------------------------------------------
-build-local: deps ## Build for current platform (with explicit suffix)
+build-local: deps-runtime ## Build for current platform (with explicit suffix)
 	@mkdir -p $(BUILD_DIR)
 	@echo "Building for $(HOST_OS)/$(HOST_ARCH)..."
 	CGO_ENABLED=1 go build $(GOFLAGS) -ldflags '$(LDFLAGS)' -o $(BUILD_DIR)/$(BINARY_NAME)-$(HOST_OS)-$(HOST_ARCH)$(EXE_EXT) $(MAIN_PATH)
@@ -185,7 +194,7 @@ build-windows-amd64: ## Build windows/amd64
 # NOTE: Cross-compilation with CGO_ENABLED=1 requires platform-specific toolchains
 # NOTE: Run 'make embed-all' first to generate embedded resources
 # -----------------------------------------------------------------------------
-build-all: deps ## Build for this host only (cross-platform builds require host-specific tooling)
+build-all: deps-runtime ## Build for this host only (cross-platform builds require host-specific tooling)
 	@mkdir -p $(BUILD_DIR)
 	@echo "Host detected: $(HOST_OS)/$(HOST_ARCH)"
 	@if [ "$(HOST_OS)" = "linux" ]; then \
