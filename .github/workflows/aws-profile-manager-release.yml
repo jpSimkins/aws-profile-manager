@@ -339,7 +339,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           tag_name: ${{ needs.create-tag.outputs.tag }}
           name: AWS Profile Manager ${{ needs.create-tag.outputs.version }}
