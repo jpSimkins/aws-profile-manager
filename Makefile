@@ -337,9 +337,9 @@ setup: deps deps-dev ## Setup development environment
 # -----------------------------------------------------------------------------
 # Package desktop application for distribution (uses fyne package)
 # Produces platform-specific artifacts in bin/:
-#   Linux:   "AWS Profile Manager-linux-<arch>.tar.xz"
-#   macOS:   "AWS Profile Manager-darwin-<arch>.zip"
-#   Windows: "AWS Profile Manager-windows-<arch>.exe"
+#   Linux:   "AWS.Profile.Manager-linux-<arch>.tar.xz"
+#   macOS:   "AWS.Profile.Manager-darwin-<arch>.zip"
+#   Windows: "AWS.Profile.Manager-windows-<arch>.exe"
 # -----------------------------------------------------------------------------
 package-desktop: build fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
@@ -366,8 +366,11 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		rm -rf "$(APP_NAME).app"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip"; \
 	elif [ "$(HOST_OS)" = "windows" ]; then \
-		mv "$(APP_NAME) Setup.exe" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe" 2>/dev/null || \
-		mv "$(APP_NAME).exe" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe" 2>/dev/null || true; \
+		if [ ! -f "$(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)" ]; then \
+			echo "ERROR: expected $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT) to exist"; \
+			exit 1; \
+		fi; \
+		cp "$(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
 	fi
 

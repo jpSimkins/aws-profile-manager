@@ -159,10 +159,22 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
+            arch: amd64
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm64
+          - os: macos-13
+            platform: darwin
+            arch: amd64
           - os: macos-latest
             platform: darwin
+            arch: arm64
           - os: windows-latest
             platform: windows
+            arch: amd64
+          - os: windows-11-arm
+            platform: windows
+            arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -348,18 +360,22 @@ jobs:
 
             ## ✅ Pick the right download
 
+            This project ships one executable that supports both CLI and GUI usage.
+            The two download columns below are distribution formats for that same app: a direct binary and a desktop package.
+
             If you're not sure which CPU you have:
 
             - **Linux/macOS:** `uname -m` → `x86_64` = amd64, `arm64`/`aarch64` = arm64
-            - **Windows (PowerShell):** `$env:PROCESSOR_ARCHITECTURE` → `AMD64`
+            - **Windows (PowerShell):** `$env:PROCESSOR_ARCHITECTURE` → `AMD64` or `ARM64`
 
-            | OS | CPU | **CLI (Terminal)** | **Desktop App (GUI)** |
+            | OS | CPU | **Direct Binary (CLI + GUI)** | **Desktop Package (same app)** |
             |---|---|---|---|
             | **Linux** | amd64 (x86_64) | `aws-profile-manager-linux-amd64` | `AWS.Profile.Manager-linux-amd64.tar.xz` |
-            | **Linux** | arm64 (aarch64) | `aws-profile-manager-linux-arm64` | `AWS.Profile.Manager-linux-arm64.tar.xz` *(if present)* |
+            | **Linux** | arm64 (aarch64) | `aws-profile-manager-linux-arm64` | `AWS.Profile.Manager-linux-arm64.tar.xz` |
             | **macOS (Intel)** | amd64 | `aws-profile-manager-darwin-amd64` | `AWS.Profile.Manager-darwin-amd64.zip` |
             | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS.Profile.Manager-darwin-arm64.zip` |
             | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS.Profile.Manager-windows-amd64.exe` |
+            | **Windows** | arm64 | `aws-profile-manager-windows-arm64.exe` | `AWS.Profile.Manager-windows-arm64.exe` |
 
             ## 🔐 Verify your download (checksums)
 
