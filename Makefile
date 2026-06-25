@@ -336,13 +336,12 @@ setup: deps deps-dev ## Setup development environment
 package-desktop: build fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
-	@echo "Stamping FyneApp.toml with app version $(APP_VERSION) (from $(VERSION))..."
-	@tmp_file=$$(mktemp); \
-		sed 's/^Version = .*/Version = "$(APP_VERSION)"/' $(FYNE_METADATA_FILE) > "$$tmp_file" && \
-		mv "$$tmp_file" $(FYNE_METADATA_FILE)
+	@echo "Using app version $(APP_VERSION) (from $(VERSION)) for package metadata..."
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
 		--name "$(APP_NAME)" \
+		--app-version "$(APP_VERSION)" \
+		$(FYNE_SOURCE_ARG) \
 		$(FYNE_ICON_ARG) \
 		$(FYNE_APP_ID_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)

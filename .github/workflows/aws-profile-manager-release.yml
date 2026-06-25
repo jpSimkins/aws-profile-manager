@@ -137,9 +137,6 @@ jobs:
       - name: Install dependencies
         run: make deps-all
 
-      - name: Run build
-        run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
-
       - name: Run tests
         run: make test
 
