@@ -329,10 +329,6 @@ jobs:
           body: |
             ## AWS Profile Manager ${{ needs.create-tag.outputs.version }}
 
-            ### 🎯 What is this?
-
-            AWS Profile Manager lets you manage AWS CLI profiles via **CLI** or a **Desktop app**.
-
             ## ✅ Pick the right download
 
             If you're not sure which CPU you have:
@@ -348,183 +344,18 @@ jobs:
             | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS.Profile.Manager-darwin-arm64.zip` |
             | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS.Profile.Manager-windows-amd64.exe` |
 
-
             ## 🔐 Verify your download (checksums)
 
-            Each release includes `checksums-<platform>.txt`.
-
-            **Linux**
-            ```bash
-            sha256sum -c checksums-linux.txt
-            ````
-
-            **macOS**
-
-            ```bash
-            shasum -a 256 -c checksums-darwin.txt
-            ```
-
-            **Windows (PowerShell)**
-
-            ```powershell
-            Get-FileHash -Algorithm SHA256 '<your file>'
-            # Compare with checksums-windows.txt
-            ```
-
-            Verify a single file manually (replace placeholders):
-
-            * Linux: `echo '<HASH>  <FILE>' | sha256sum -c`
-            * macOS: `echo '<HASH>  <FILE>' | shasum -a 256 -c`
-
-
-            ## ⚙️ Install — CLI binary
-
-            ### Linux
-
-            ```bash
-            # Make executable & run in place
-            chmod +x aws-profile-manager-linux-<arch>
-            ./aws-profile-manager-linux-<arch> --help
-
-            # Optional: install to PATH
-            sudo mv aws-profile-manager-linux-<arch> /usr/local/bin/aws-profile-manager
-            # or user-local:
-            mkdir -p ~/.local/bin
-            mv aws-profile-manager-linux-<arch> ~/.local/bin/aws-profile-manager
-            ```
-
-            ### macOS
-
-            ```bash
-            chmod +x aws-profile-manager-darwin-<arch>
-            ./aws-profile-manager-darwin-<arch> --help
-
-            # Optional: install to PATH
-            sudo mv aws-profile-manager-darwin-<arch> /usr/local/bin/aws-profile-manager
-
-            # If Gatekeeper blocks the first launch:
-            xattr -dr com.apple.quarantine /usr/local/bin/aws-profile-manager
-            ```
-
-            ### Windows (PowerShell)
-
-            ```powershell
-            .\aws-profile-manager-windows-amd64.exe --help
-            # Optional: move to a folder on PATH (e.g., C:\Tools) and add it to PATH
-            ```
-
-
-            ## 🖥️ Install — Desktop app (GUI)
-
-            ### Linux (`.tar.xz`)
-
-            ```bash
-            # Extract
-            tar -xf "AWS.Profile.Manager-linux-<arch>.tar.xz"
-
-            # Change directory
-            cd aws-profile-manager
-
-            # System-wide (sudo)
-            sudo cp -r usr/local/* /usr/local/
-            sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
-
-            # Or per-user (no sudo)
-            mkdir -p ~/.local
-            cp -r usr/local/* ~/.local/
-            update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
-
-            # Launch
-            aws-profile-manager
-            # or find “AWS Profile Manager” in your app menu
-            ```
-
-            ### macOS (`.zip` → `.app`)
-
-            ```bash
-            # Unzip and move to Applications
-            unzip "AWS.Profile.Manager-darwin-<arch>.zip"
-            mv "AWS.Profile.Manager.app" /Applications/
-            open "/Applications/AWS.Profile.Manager.app"
-
-            # If blocked by Gatekeeper:
-            # Right-click the app → Open → Open
-            # or:
-            xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
-            ```
-
-            ### Windows (`.exe`)
-
-            * Download `aws-profile-manager-windows-amd64.exe`
-            * Double-click to run
-              *(Optional: move to `C:\Program Files\AWS Profile Manager\` and create a Start Menu/Desktop shortcut.)*
-
-            ---
+            For install and uninstall instructions, see the project README.
 
             ${{ steps.checksums.outputs.checksums }}
 
             ---
 
-            ## 🚀 Quick start
+            ## 📝 Changes since previous release
 
-            ```bash
-            aws-profile-manager --help
-            aws-profile-manager --cheatsheet-only
-            ```
-
-            Config writes to:
-
-            * Linux/macOS: `~/.aws/config`
-            * Windows: `%UserProfile%\.aws\config`
-
-            ---
-
-            ## 🧹 Uninstall
-
-            **CLI**
-
-            * Remove the copied binary (e.g., `/usr/local/bin/aws-profile-manager`) or delete the `.exe` on Windows.
-
-            **Linux Desktop**
-
-            ```bash
-            # System-wide
-            sudo rm -f /usr/local/bin/aws-profile-manager
-            sudo rm -f /usr/local/share/applications/com.son9ne.aws-profile-manager.desktop
-            sudo rm -f /usr/local/share/pixmaps/com.son9ne.aws-profile-manager.png
-            sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
-
-            # Per-user
-            rm -f ~/.local/bin/aws-profile-manager
-            rm -f ~/.local/share/applications/com.son9ne.aws-profile-manager.desktop
-            rm -f ~/.local/share/pixmaps/com.son9ne.aws-profile-manager.png
-            update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
-            ```
-
-            **macOS**
-            Delete `/Applications/AWS Profile Manager.app`.
-
-            **Windows**
-            Delete the `.exe` (and any shortcuts).
-
-            ---
-
-            ## 🩹 Troubleshooting
-
-            * **macOS “unidentified developer” or “damaged”**
-              Right-click → **Open** → **Open**, or run:
-
-              ```bash
-              xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
-              ```
-
-            * **Linux GUI issues (blank window / won't launch)**
-              Ensure OpenGL drivers and basic X11/Wayland packages are installed; on headless servers use the CLI.
-
-            * **Windows SmartScreen warning**
-              Click **More info** → **Run anyway** (until builds are code-signed/notarized).
-
-
+            Auto-generated release notes are included below.
+          generate_release_notes: true
 
           files: |
             artifacts/build-*/aws-profile-manager-*

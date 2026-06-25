@@ -48,34 +48,53 @@ aws-profile-manager install
 
 **Linux:**
 ```bash
-# Download and extract
-tar -xf aws-profile-manager-linux-amd64.tar.xz
-sudo mv aws-profile-manager /usr/local/bin/
+# CLI binary
+chmod +x aws-profile-manager-linux-<arch>
+sudo install -m 0755 aws-profile-manager-linux-<arch> /usr/local/bin/aws-profile-manager
+aws-profile-manager --version
 
-# Or use the desktop package
-tar -xf aws-profile-manager-linux-amd64.tar.xz
-./install.sh  # Adds desktop entry and menu item
+# Desktop app package
+tar -xf AWS.Profile.Manager-linux-<arch>.tar.xz
+cd aws-profile-manager
+
+# System-wide install
+sudo cp -r usr/local/* /usr/local/
+sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
+
+# Or per-user install (no sudo)
+mkdir -p ~/.local
+cp -r usr/local/* ~/.local/
+update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
 ```
 
 **macOS:**
 ```bash
-# Download and extract
-unzip aws-profile-manager-darwin-amd64.zip
+# CLI binary
+chmod +x aws-profile-manager-darwin-<arch>
+sudo install -m 0755 aws-profile-manager-darwin-<arch> /usr/local/bin/aws-profile-manager
+aws-profile-manager --version
 
-# Move to Applications
+# Desktop app package
+unzip AWS.Profile.Manager-darwin-<arch>.zip
 mv "AWS Profile Manager.app" /Applications/
+open "/Applications/AWS Profile Manager.app"
 
-# Or use from terminal
-chmod u+x aws-profile-manager
-sudo mv aws-profile-manager /usr/local/bin/
+# If Gatekeeper blocks first launch:
+xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
 ```
 
 **Windows:**
-```bash
-# Download and run the installer
-aws-profile-manager-windows-amd64.exe
+```powershell
+# CLI binary
+.\aws-profile-manager-windows-amd64.exe --version
 
-# Or download the CLI binary and add to PATH
+# Optional: place CLI on PATH
+New-Item -ItemType Directory -Force "$HOME\bin" | Out-Null
+Copy-Item .\aws-profile-manager-windows-amd64.exe "$HOME\bin\aws-profile-manager.exe"
+
+# Desktop app package
+Start-Process .\AWS.Profile.Manager-windows-amd64.exe
+# Follow the installer prompts (or run directly if it is a portable GUI executable)
 ```
 
 ### 2. Generate Profiles
@@ -115,6 +134,51 @@ aws --profile commercial-dev-Developer s3 ls
 ```
 
 That's it! You now have all your AWS profiles configured and ready to use.
+
+## Uninstall
+
+Use these commands to remove AWS Profile Manager from your system.
+
+**CLI binary:**
+
+- Linux/macOS (system install):
+```bash
+sudo rm -f /usr/local/bin/aws-profile-manager
+```
+
+- Linux/macOS (user install):
+```bash
+rm -f ~/.local/bin/aws-profile-manager
+```
+
+- Windows: remove `aws-profile-manager.exe` from your PATH location (for example `$HOME\\bin`).
+
+**Linux desktop package:**
+
+```bash
+# System-wide install removal
+sudo rm -f /usr/local/bin/aws-profile-manager
+sudo rm -f /usr/local/share/applications/com.son9ne.aws-profile-manager.desktop
+sudo rm -f /usr/local/share/pixmaps/com.son9ne.aws-profile-manager.png
+sudo update-desktop-database /usr/share/applications/ 2>/dev/null || true
+
+# Per-user install removal
+rm -f ~/.local/bin/aws-profile-manager
+rm -f ~/.local/share/applications/com.son9ne.aws-profile-manager.desktop
+rm -f ~/.local/share/pixmaps/com.son9ne.aws-profile-manager.png
+update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
+```
+
+**macOS desktop app:**
+
+```bash
+rm -rf "/Applications/AWS Profile Manager.app"
+```
+
+**Windows desktop app:**
+
+- If installed: uninstall from **Settings > Apps > Installed apps**.
+- If portable: delete `AWS.Profile.Manager-windows-amd64.exe` and any shortcuts you created.
 
 ## Core Features
 
