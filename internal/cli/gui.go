@@ -42,7 +42,10 @@ func isTestEnvironment() bool {
 // Parameters:
 //   - cmd: Cobra command context
 //   - args: Command arguments (unused)
-func runGUI(cmd *cobra.Command, args []string) {
+//
+// Returns:
+//   - error: Always nil (GUI errors are logged, not returned)
+func runGUI(cmd *cobra.Command, args []string) error {
 	logging.Debug.Log("Launching GUI interface...")
 
 	// Get config file from global flag
@@ -54,16 +57,17 @@ func runGUI(cmd *cobra.Command, args []string) {
 	// Handle test environment - don't actually run GUI
 	if isTestEnvironment() {
 		logging.Log.Info("Test environment detected - GUI creation successful")
-		return
+		return nil
 	}
 
 	// Create and run the GUI application
 	app, err := gui.NewApp()
 	if err != nil {
 		_ = logging.Log.ErrorWithDetails("Failed to create GUI application", err)
-		return
+		return nil
 	}
 	app.Run(configFile)
 
 	logging.Debug.Log("GUI interface exited")
+	return nil
 }

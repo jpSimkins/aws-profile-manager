@@ -342,11 +342,11 @@ jobs:
 
             | OS | CPU | **CLI (Terminal)** | **Desktop App (GUI)** |
             |---|---|---|---|
-            | **Linux** | amd64 (x86_64) | `aws-profile-manager-linux-amd64` | `AWS Profile Manager-linux-amd64.tar.xz` |
-            | **Linux** | arm64 (aarch64) | `aws-profile-manager-linux-arm64` | `AWS Profile Manager-linux-arm64.tar.xz` *(if present)* |
-            | **macOS (Intel)** | amd64 | `aws-profile-manager-darwin-amd64` | `AWS Profile Manager-darwin-amd64.zip` |
-            | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS Profile Manager-darwin-arm64.zip` |
-            | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS Profile Manager-windows-amd64.exe` |
+            | **Linux** | amd64 (x86_64) | `aws-profile-manager-linux-amd64` | `AWS.Profile.Manager-linux-amd64.tar.xz` |
+            | **Linux** | arm64 (aarch64) | `aws-profile-manager-linux-arm64` | `AWS.Profile.Manager-linux-arm64.tar.xz` *(if present)* |
+            | **macOS (Intel)** | amd64 | `aws-profile-manager-darwin-amd64` | `AWS.Profile.Manager-darwin-amd64.zip` |
+            | **macOS (Apple Silicon)** | arm64 | `aws-profile-manager-darwin-arm64` | `AWS.Profile.Manager-darwin-arm64.zip` |
+            | **Windows** | amd64 | `aws-profile-manager-windows-amd64.exe` | `AWS.Profile.Manager-windows-amd64.exe` |
 
 
             ## 🔐 Verify your download (checksums)
