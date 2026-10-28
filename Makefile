@@ -375,6 +375,27 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 	@echo "Packaging $(APP_NAME) for $(HOST_OS)/$(HOST_ARCH)..."
 	@mkdir -p $(BUILD_DIR)
 	@echo "Using app version $(APP_VERSION) (from $(VERSION)) for package metadata..."
+ifeq ($(HOST_OS),windows)
+	@set -e; \
+		staged_exe="$(MAIN_PATH)/$(BINARY_NAME)$(EXE_EXT)"; \
+		packaged_exe="$(MAIN_PATH)/$(APP_NAME)$(EXE_EXT)"; \
+		if [ -e "$$staged_exe" ] || [ -e "$$packaged_exe" ]; then \
+			echo "ERROR: Windows package staging file already exists"; \
+			exit 1; \
+		fi; \
+		trap 'rm -f "$$staged_exe" "$$packaged_exe"' 0; \
+		cp "$(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)" "$$staged_exe"; \
+		"$(GOPATH_BIN)/fyne" package \
+			--release \
+			--name "$(APP_NAME)" \
+			--app-version "$(APP_VERSION)" \
+			$(FYNE_PACKAGE_SOURCE_ARG) \
+			$(FYNE_ICON_ARG) \
+			$(FYNE_APP_ID_ARG) \
+			--executable "$(BINARY_NAME)$(EXE_EXT)"; \
+		cp "$$packaged_exe" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
+		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"
+else
 	"$(GOPATH_BIN)/fyne" package \
 		--release \
 		--name "$(APP_NAME)" \
@@ -383,6 +404,7 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		$(FYNE_ICON_ARG) \
 		$(FYNE_APP_ID_ARG) \
 		--executable $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)
+endif
 	@if [ "$(HOST_OS)" = "linux" ]; then \
 		tmp_pkg_dir=$$(mktemp -d); \
 		tar -xf "$(APP_NAME).tar.xz" -C "$$tmp_pkg_dir"; \
@@ -396,12 +418,10 @@ package-desktop: build fyne-tool ## Package desktop application for distribution
 		rm -rf "$(APP_NAME).app"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip"; \
 	elif [ "$(HOST_OS)" = "windows" ]; then \
-		if [ ! -f "$(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)" ]; then \
-			echo "ERROR: expected $(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT) to exist"; \
+		if [ ! -f "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe" ]; then \
+			echo "ERROR: expected packaged executable $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe to exist"; \
 			exit 1; \
 		fi; \
-		cp "$(BUILD_DIR)/$(BINARY_NAME)$(EXE_EXT)" "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
-		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).exe"; \
 	fi
 
 # -----------------------------------------------------------------------------
