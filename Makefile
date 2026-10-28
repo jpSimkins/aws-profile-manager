@@ -414,7 +414,9 @@ endif
 		rm -f "$(APP_NAME).tar.xz"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).tar.xz"; \
 	elif [ "$(HOST_OS)" = "darwin" ]; then \
-		zip -r "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip" "$(APP_NAME).app"; \
+		codesign --force --sign - "$(APP_NAME).app" || exit 1; \
+		codesign --verify --deep --strict --verbose=4 "$(APP_NAME).app" || exit 1; \
+		zip -r "$(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip" "$(APP_NAME).app" || exit 1; \
 		rm -rf "$(APP_NAME).app"; \
 		echo "Created $(BUILD_DIR)/$(ARTIFACT_NAME)-$(SUFFIX).zip"; \
 	elif [ "$(HOST_OS)" = "windows" ]; then \
