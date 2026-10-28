@@ -77,11 +77,17 @@ aws-profile-manager --version
 # Desktop app package
 unzip AWS.Profile.Manager-darwin-<arch>.zip
 mv "AWS Profile Manager.app" /Applications/
+codesign --verify --deep --strict --verbose=4 "/Applications/AWS Profile Manager.app"
 open "/Applications/AWS Profile Manager.app"
 
-# If Gatekeeper blocks first launch:
+# Only if signature verification succeeds and you trust the download:
 xattr -dr com.apple.quarantine "/Applications/AWS Profile Manager.app"
 ```
+
+macOS desktop packages are ad-hoc signed, not Developer ID signed or notarized by
+Apple. Gatekeeper may still block first launch. Verify the download against its
+release checksum before removing quarantine. If signature verification fails,
+stop and download a fresh copy; removing quarantine does not repair a signature.
 
 **Windows:**
 ```powershell
