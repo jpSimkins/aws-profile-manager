@@ -199,6 +199,16 @@ jobs:
         if: ${{ matrix.platform != 'windows' }}
         run: make deps-system
 
+      - name: Verify macOS architecture
+        if: ${{ matrix.platform == 'darwin' }}
+        shell: bash
+        run: |
+          actual_arch="$(go env GOARCH)"
+          if [[ "$actual_arch" != "${{ matrix.arch }}" ]]; then
+            echo "::error::Expected macOS ${{ matrix.arch }} runner, got $actual_arch"
+            exit 1
+          fi
+
       - name: Build
         run: make build-local VERSION=${{ needs.create-tag.outputs.version }}
 
@@ -223,25 +233,25 @@ jobs:
         if: ${{ matrix.platform == 'linux' }}
         run: |
           cd bin
-          sha256sum * > checksums-linux.txt
-          cat checksums-linux.txt
+          sha256sum * > checksums-linux-${{ matrix.arch }}.txt
+          cat checksums-linux-${{ matrix.arch }}.txt
 
       - name: Create checksums (macOS)
         if: ${{ matrix.platform == 'darwin' }}
         shell: bash
         run: |
           cd bin
-          : > checksums-darwin.txt
+          : > checksums-darwin-${{ matrix.arch }}.txt
           # Only hash files (skip .app directories)
-          find . -maxdepth 1 -type f -print0 | xargs -0 -n1 shasum -a 256 >> checksums-darwin.txt
-          cat checksums-darwin.txt
+          find . -maxdepth 1 -type f -print0 | xargs -0 -n1 shasum -a 256 >> checksums-darwin-${{ matrix.arch }}.txt
+          cat checksums-darwin-${{ matrix.arch }}.txt
 
       - name: Create checksums (Windows)
         if: ${{ matrix.platform == 'windows' }}
         shell: pwsh
         run: |
           Set-Location bin
-          $out = "checksums-windows.txt"
+          $out = "checksums-windows-${{ matrix.arch }}.txt"
           $files = Get-ChildItem -File | Where-Object { $_.Name -ne $out -and $_.Name -notlike "checksums-*.txt" }
           $lines = foreach ($f in $files) {
             $h = (Get-FileHash -Algorithm SHA256 -LiteralPath $f.FullName).Hash.ToLower()
@@ -253,7 +263,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874  # v4.4.0
         with:
-          name: build-${{ matrix.platform }}
+          name: build-${{ matrix.platform }}-${{ matrix.arch }}
           if-no-files-found: error
           path: ${{ github.workspace }}/bin/**
 
@@ -296,59 +306,61 @@ jobs:
           echo "" >> $GITHUB_OUTPUT
 
           for platform in linux darwin windows; do
-            FILE=$(find artifacts -type f -name "checksums-$platform.txt" | head -n1)
-            if [ -n "$FILE" ]; then
-              echo "#### ${platform^} Platform" >> $GITHUB_OUTPUT
-              echo "" >> $GITHUB_OUTPUT
-              echo "**Batch verification:**" >> $GITHUB_OUTPUT
-              if [ "$platform" = "darwin" ]; then
-                echo '```bash' >> $GITHUB_OUTPUT
-                echo "# Download checksums-$platform.txt first" >> $GITHUB_OUTPUT
-                echo "shasum -a 256 -c checksums-$platform.txt" >> $GITHUB_OUTPUT
-                echo '```' >> $GITHUB_OUTPUT
-              elif [ "$platform" = "windows" ]; then
-                echo '```powershell' >> $GITHUB_OUTPUT
-                echo "# Download checksums-$platform.txt and compare manually with:" >> $GITHUB_OUTPUT
-                echo "Get-FileHash -Algorithm SHA256 <filename>" >> $GITHUB_OUTPUT
-                echo '```' >> $GITHUB_OUTPUT
-              else
-                echo '```bash' >> $GITHUB_OUTPUT
-                echo "# Download checksums-$platform.txt first" >> $GITHUB_OUTPUT
-                echo "sha256sum -c checksums-$platform.txt" >> $GITHUB_OUTPUT
-                echo '```' >> $GITHUB_OUTPUT
+            for arch in amd64 arm64; do
+              FILE=$(find artifacts -type f -name "checksums-$platform-$arch.txt" | head -n1)
+              if [ -n "$FILE" ]; then
+                echo "#### ${platform^} $arch Platform" >> $GITHUB_OUTPUT
+                echo "" >> $GITHUB_OUTPUT
+                echo "**Batch verification:**" >> $GITHUB_OUTPUT
+                if [ "$platform" = "darwin" ]; then
+                  echo '```bash' >> $GITHUB_OUTPUT
+                  echo "# Download checksums-$platform-$arch.txt first" >> $GITHUB_OUTPUT
+                  echo "shasum -a 256 -c checksums-$platform-$arch.txt" >> $GITHUB_OUTPUT
+                  echo '```' >> $GITHUB_OUTPUT
+                elif [ "$platform" = "windows" ]; then
+                  echo '```powershell' >> $GITHUB_OUTPUT
+                  echo "# Download checksums-$platform-$arch.txt and compare manually with:" >> $GITHUB_OUTPUT
+                  echo "Get-FileHash -Algorithm SHA256 <filename>" >> $GITHUB_OUTPUT
+                  echo '```' >> $GITHUB_OUTPUT
+                else
+                  echo '```bash' >> $GITHUB_OUTPUT
+                  echo "# Download checksums-$platform-$arch.txt first" >> $GITHUB_OUTPUT
+                  echo "sha256sum -c checksums-$platform-$arch.txt" >> $GITHUB_OUTPUT
+                  echo '```' >> $GITHUB_OUTPUT
+                fi
+                echo "" >> $GITHUB_OUTPUT
+                echo "**Individual file verification:**" >> $GITHUB_OUTPUT
+                if [ "$platform" = "windows" ]; then
+                  echo '```powershell' >> $GITHUB_OUTPUT
+                  while IFS= read -r line; do
+                    checksum=$(echo "$line" | awk '{print $1}')
+                    filename=$(echo "$line" | cut -d' ' -f3-)
+                    [ -n "$checksum" ] && [ -n "$filename" ] && {
+                      echo "# Verify $filename" >> $GITHUB_OUTPUT
+                      echo "# Expected: $checksum" >> $GITHUB_OUTPUT
+                      echo "certutil -hashfile \"$filename\" SHA256" >> $GITHUB_OUTPUT
+                      echo "" >> $GITHUB_OUTPUT
+                    }
+                  done < "$FILE"
+                  echo '```' >> $GITHUB_OUTPUT
+                else
+                  echo '```bash' >> $GITHUB_OUTPUT
+                  while IFS= read -r line; do
+                    checksum=$(echo "$line" | awk '{print $1}')
+                    filename=$(echo "$line" | cut -d' ' -f3-)
+                    [ -n "$checksum" ] && [ -n "$filename" ] && {
+                      if [ "$platform" = "darwin" ]; then
+                        echo "echo \"$checksum  $filename\" | shasum -a 256 -c" >> $GITHUB_OUTPUT
+                      else
+                        echo "echo \"$checksum  $filename\" | sha256sum -c" >> $GITHUB_OUTPUT
+                      fi
+                    }
+                  done < "$FILE"
+                  echo '```' >> $GITHUB_OUTPUT
+                fi
+                echo "" >> $GITHUB_OUTPUT
               fi
-              echo "" >> $GITHUB_OUTPUT
-              echo "**Individual file verification:**" >> $GITHUB_OUTPUT
-              if [ "$platform" = "windows" ]; then
-                echo '```powershell' >> $GITHUB_OUTPUT
-                while IFS= read -r line; do
-                  checksum=$(echo "$line" | awk '{print $1}')
-                  filename=$(echo "$line" | cut -d' ' -f3-)
-                  [ -n "$checksum" ] && [ -n "$filename" ] && {
-                    echo "# Verify $filename" >> $GITHUB_OUTPUT
-                    echo "# Expected: $checksum" >> $GITHUB_OUTPUT
-                    echo "certutil -hashfile \"$filename\" SHA256" >> $GITHUB_OUTPUT
-                    echo "" >> $GITHUB_OUTPUT
-                  }
-                done < "$FILE"
-                echo '```' >> $GITHUB_OUTPUT
-              else
-                echo '```bash' >> $GITHUB_OUTPUT
-                while IFS= read -r line; do
-                  checksum=$(echo "$line" | awk '{print $1}')
-                  filename=$(echo "$line" | cut -d' ' -f3-)
-                  [ -n "$checksum" ] && [ -n "$filename" ] && {
-                    if [ "$platform" = "darwin" ]; then
-                      echo "echo \"$checksum  $filename\" | shasum -a 256 -c" >> $GITHUB_OUTPUT
-                    else
-                      echo "echo \"$checksum  $filename\" | sha256sum -c" >> $GITHUB_OUTPUT
-                    fi
-                  }
-                done < "$FILE"
-                echo '```' >> $GITHUB_OUTPUT
-              fi
-              echo "" >> $GITHUB_OUTPUT
-            fi
+            done
           done
           echo "EOF" >> $GITHUB_OUTPUT
 
